@@ -1,0 +1,122 @@
+/*
+ * ELVTR design tokens — Tailwind v4 + shadcn/ui semantic slots.
+ *
+ * Source of truth: ELVTR Figma
+ *   - Photo-Booth guide      4lATmsCWTIPFijqrJ3coMN
+ *   - E-mail Student Care    GoIYuTuzY350FDmR5UYGrc
+ *
+ * Light theme only for now.
+ */
+
+@import "tailwindcss";
+@import "./fonts.css";
+
+:root {
+  /* ---- ELVTR brand palette (Figma style names, verbatim hex) ------------ */
+  /* "Green-Lime Palette/Dark Teal" — primary brand, hero bg, headings */
+  --elvtr-dark-teal: #004a4a;
+  /* Lime accent — chips / highlight text. Pairs ONLY with Dark Teal,
+     never with white/light text. */
+  --elvtr-lime: #c8ff68;
+  /* "Alice Blue" — info-tile / card background */
+  --elvtr-alice-blue: #ebf2f4;
+  /* "B&W/Dark" — body text */
+  --elvtr-dark: #212121;
+  /* Light text on teal / light neutral */
+  --elvtr-light: #f3f3f3;
+  /* Sand — page background behind cards (eyeballed from email render).
+     TODO confirm exact hex with Design Team */
+  --elvtr-sand: #f2efe9;
+
+  /* ---- shadcn/ui semantic slots (light theme) ---------------------------- */
+  --background: var(--elvtr-sand);
+  --foreground: var(--elvtr-dark);
+  --card: var(--elvtr-alice-blue);
+  --card-foreground: var(--elvtr-dark);
+  --popover: var(--elvtr-alice-blue);
+  --popover-foreground: var(--elvtr-dark);
+  --primary: var(--elvtr-dark-teal);
+  --primary-foreground: var(--elvtr-light);
+  --secondary: var(--elvtr-alice-blue);
+  --secondary-foreground: var(--elvtr-dark-teal);
+  --muted: var(--elvtr-alice-blue);
+  /* Muted text = brand dark at reduced opacity (derived, not a Figma token) */
+  --muted-foreground: rgb(33 33 33 / 0.64);
+  --accent: var(--elvtr-lime);
+  --accent-foreground: var(--elvtr-dark-teal);
+  /* Not in the ELVTR palette — shadcn default destructive red retained */
+  --destructive: #dc2626;
+  --destructive-foreground: var(--elvtr-light);
+  /* Hairlines = brand dark at low opacity (derived, not a Figma token) */
+  --border: rgb(33 33 33 / 0.12);
+  --input: rgb(33 33 33 / 0.16);
+  --ring: var(--elvtr-dark-teal);
+
+  /* Radii: cards 15px; pill chips/buttons fully rounded (~30px → rounded-full) */
+  --radius: 0.9375rem; /* 15px */
+}
+
+@theme inline {
+  /* Semantic color slots → Tailwind utilities (bg-primary, text-accent, …) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand palette as first-class utilities (bg-elvtr-lime, text-elvtr-dark-teal, …) */
+  --color-elvtr-dark-teal: var(--elvtr-dark-teal);
+  --color-elvtr-lime: var(--elvtr-lime);
+  --color-elvtr-alice-blue: var(--elvtr-alice-blue);
+  --color-elvtr-dark: var(--elvtr-dark);
+  --color-elvtr-light: var(--elvtr-light);
+  --color-elvtr-sand: var(--elvtr-sand);
+
+  /* Typography */
+  --font-display:
+    "ABC Arizona Flare", Georgia, "Times New Roman", serif;
+  --font-sans:
+    "Neue Montreal", Inter, "Helvetica Neue", Arial, sans-serif;
+
+  /* Radius scale (shadcn convention), anchored to --radius = 15px */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    /* Brand body default: Neue Montreal 500, 1.2 line-height (Figma P2) */
+    @apply bg-background font-sans font-medium text-foreground;
+    line-height: 1.2;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    /* Brand display default: ABC Arizona Flare 500, tight leading/tracking */
+    @apply font-display font-medium tracking-tight;
+  }
+}
