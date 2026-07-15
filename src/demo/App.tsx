@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 
 import {
   AgreeRow,
@@ -98,12 +98,8 @@ const TYPE_RAMP: Array<[string, string, string]> = [
 export default function App() {
   const [theme, setTheme] = useState<Theme>("green")
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme)
-  }, [theme])
-
   return (
-    <div className="min-h-screen bg-page pb-24 font-sans text-ink">
+    <div data-theme={theme} className="min-h-screen bg-page pb-24 font-sans text-ink">
       {/* Header / theme switcher */}
       <header className="sticky top-0 z-10 border-b border-line bg-page/90 backdrop-blur">
         <div className="mx-auto flex max-w-[1286px] flex-wrap items-center justify-between gap-4 px-6 py-3">
