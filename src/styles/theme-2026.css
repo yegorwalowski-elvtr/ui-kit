@@ -1,0 +1,221 @@
+/*
+ * ELVTR "New Website 2026" theme — tokens extracted from Figma
+ * "New Website" / canvas "2026 drafts Y" (KXbrrLqsosb4KEQLKwYDT9).
+ * See docs/DESIGN-SYSTEM-PLAN.md for the full spec and sources.
+ *
+ * Self-sufficient Tailwind entrypoint: imports tokens.css (which pulls in
+ * Tailwind + fonts + the shadcn slot mapping) and then overrides the
+ * semantic slots with the redesign palette and adds the 2026 primitives +
+ * category themes. Consumers import EITHER "@elvtr/ui-kit/styles.css"
+ * (legacy Photo-Booth palette) OR "@elvtr/ui-kit/theme-2026.css" — never
+ * both. tokens.css stays untouched for existing consumers.
+ */
+
+@import "./tokens.css";
+
+:root {
+  /* ---- Neutrals (ink & text) ------------------------------------------- */
+  --ink: #21180d; /* warm near-black: headlines, control labels */
+  --ink-cool: #0e081e; /* Figma token Grayscale/100 — reconcile with design */
+  --ink-2: #282828;
+  --text-body: #393939;
+  --text-dim: #3c3c3c; /* dark text on tints (Color-pair rule) */
+  --text-muted: #5a5a5a; /* ≈ grey/35 #5A5A58 */
+  --text-meta: #595959;
+  --text-subtle: #787878;
+  --text-faint: #a3a3a3; /* placeholders, default input underline */
+  --text-hush: #a6a6a6; /* past breadcrumbs, detail labels */
+
+  /* ---- Surfaces ---------------------------------------------------------- */
+  --surface-page: #f3f3f3;
+  --surface-control: #f9f9f9; /* raised/active pills, link buttons */
+  --surface-panel: #f5f5f5;
+  --surface-strip: #e6e6e6; /* footer header band */
+  --line: #ececec;
+  --line-2: #e9e9e9;
+  --btn-neutral: #dcdcde; /* "Show More" */
+  --btn-neutral-2: #d4d4d4; /* icon disclosure, empty checkbox */
+  --numeral-ghost: #c9c9c9; /* syllabus lesson numbers */
+  --surface-dark: #1f1f1f;
+
+  /* ---- Semantic ---------------------------------------------------------- */
+  --success: #018362; /* form focus + checked, whatever the theme */
+  --error: #eb4335;
+  --switch-on: #17c964;
+  --trustpilot: #00b67a;
+  --linkedin: #0a66c2;
+
+  /* ---- Category theme (default: green). Swap via data-theme. ------------ */
+  --accent-600: #018362;
+  --accent-pressed: #17c297;
+  --accent-hover: #27bd97;
+  --accent-100: #d9edee;
+  --accent-300: #95c9cc;
+  --accent-grad-a: #003f32;
+  --accent-grad-b: #018362;
+
+  /* ---- Status-tag pairs --------------------------------------------------- */
+  --tag-bestseller-bg: #f7e1ba;
+  --tag-bestseller-fg: #d3911f;
+  --tag-lastcall-bg: #ffcbe4;
+  --tag-lastcall-fg: #c04589;
+  --tag-new-bg: #cdefd1;
+  --tag-new-fg: #3e8c4b;
+  --tag-relaunch-bg: #e2d9ff;
+  --tag-relaunch-fg: #674ebb;
+  --tag-neutral-bg: #e7e4e4;
+  --tag-neutral-fg: #282828;
+
+  /* ---- Misc --------------------------------------------------------------- */
+  --avatar-counter: #67b5a1;
+  --avatar-placeholder: #d0c9ce;
+  --star-empty-boxed: #dcdce6;
+  --social-mail: #f7f0e2;
+  --social-ig: #ffedf9;
+  --social-fb: #e2e8ff;
+  --scrim: rgb(33 24 13 / 0.5);
+  --border-frost: rgb(255 255 255 / 0.4); /* signature 2px border on filled controls */
+
+  /* ---- Remap shadcn semantic slots to the 2026 palette -------------------- */
+  --background: var(--surface-page);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--accent-600);
+  --primary-foreground: #ffffff;
+  --secondary: var(--accent-100);
+  --secondary-foreground: var(--text-dim);
+  --muted: var(--surface-panel);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--accent-100);
+  --accent-foreground: var(--text-dim);
+  --destructive: var(--error);
+  --destructive-foreground: #ffffff;
+  --border: var(--line);
+  --input: var(--text-faint);
+  --ring: var(--accent-600);
+  --radius: 1rem; /* 16px — cards/panels; buttons use explicit px radii */
+}
+
+[data-theme="teal"] {
+  --accent-600: #038892;
+  --accent-pressed: #1bb5c1;
+  --accent-hover: #1bb5c1;
+  --accent-100: #c4ecef;
+  --accent-300: #7ccdd3;
+  --accent-grad-a: #04636a;
+  --accent-grad-b: #22aeb7;
+}
+
+[data-theme="terracotta"] {
+  --accent-600: #d05a36;
+  --accent-pressed: #ff7a51;
+  --accent-hover: #ff7a51;
+  --accent-100: #f7f0e2;
+  --accent-300: #eebeaf;
+  --accent-grad-a: #ab5034;
+  --accent-grad-b: #db7151;
+}
+
+[data-theme="violet"] {
+  --accent-600: #574791;
+  --accent-pressed: #7250eb;
+  --accent-hover: #7250eb;
+  --accent-100: #eaedff;
+  --accent-300: #b8a0ff;
+  --accent-grad-a: #412f7b;
+  --accent-grad-b: #6754a9;
+}
+
+@theme inline {
+  /* 2026 primitives as Tailwind utilities (bg-ink, text-faint, bg-accent-600 …) */
+  --color-ink: var(--ink);
+  --color-ink-cool: var(--ink-cool);
+  --color-ink-2: var(--ink-2);
+  --color-body-text: var(--text-body);
+  --color-dim: var(--text-dim);
+  --color-muted-warm: var(--text-muted);
+  --color-meta: var(--text-meta);
+  --color-subtle: var(--text-subtle);
+  --color-faint: var(--text-faint);
+  --color-hush: var(--text-hush);
+
+  --color-page: var(--surface-page);
+  --color-control: var(--surface-control);
+  --color-panel: var(--surface-panel);
+  --color-strip: var(--surface-strip);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-btn-neutral: var(--btn-neutral);
+  --color-btn-neutral-2: var(--btn-neutral-2);
+  --color-numeral-ghost: var(--numeral-ghost);
+  --color-dark-band: var(--surface-dark);
+
+  --color-success: var(--success);
+  --color-error-red: var(--error);
+  --color-switch-on: var(--switch-on);
+  --color-trustpilot: var(--trustpilot);
+  --color-linkedin-blue: var(--linkedin);
+
+  --color-accent-600: var(--accent-600);
+  --color-accent-pressed: var(--accent-pressed);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-100: var(--accent-100);
+  --color-accent-300: var(--accent-300);
+
+  --color-tag-bestseller-bg: var(--tag-bestseller-bg);
+  --color-tag-bestseller-fg: var(--tag-bestseller-fg);
+  --color-tag-lastcall-bg: var(--tag-lastcall-bg);
+  --color-tag-lastcall-fg: var(--tag-lastcall-fg);
+  --color-tag-new-bg: var(--tag-new-bg);
+  --color-tag-new-fg: var(--tag-new-fg);
+  --color-tag-relaunch-bg: var(--tag-relaunch-bg);
+  --color-tag-relaunch-fg: var(--tag-relaunch-fg);
+  --color-tag-neutral-bg: var(--tag-neutral-bg);
+  --color-tag-neutral-fg: var(--tag-neutral-fg);
+
+  --color-avatar-counter: var(--avatar-counter);
+  --color-avatar-placeholder: var(--avatar-placeholder);
+  --color-star-empty-boxed: var(--star-empty-boxed);
+  --color-social-mail: var(--social-mail);
+  --color-social-ig: var(--social-ig);
+  --color-social-fb: var(--social-fb);
+  --color-frost: var(--border-frost);
+
+  /* Shadows */
+  --shadow-control: 0 4px 10px rgb(14 18 27 / 0.1); /* every raised light control */
+  --shadow-hairline: 0 1px 2px rgb(0 0 0 / 0.05); /* shadow/neutral/sm */
+}
+
+/*
+ * Type ramp — Figma text styles, verbatim.
+ * AF = ABC Arizona Flare (variable; 442 "Regular" / 571 "Medium", ls −4%),
+ * NM = Neue Montreal Medium 500 (Body M/S track −2%).
+ * With fallback fonts (no licensed woff2 present) weights render as available.
+ */
+@layer utilities {
+  .t-h1 { font-family: var(--font-display); font-weight: 442; font-size: 80px; line-height: 0.9; letter-spacing: -0.04em; }
+  .t-h2 { font-family: var(--font-display); font-weight: 442; font-size: 60px; line-height: 0.9; letter-spacing: -0.04em; }
+  .t-h3 { font-family: var(--font-display); font-weight: 442; font-size: 40px; line-height: 0.9; letter-spacing: -0.04em; }
+  .t-h4 { font-family: var(--font-display); font-weight: 571; font-size: 32px; line-height: 0.9; letter-spacing: -0.04em; }
+  .t-h5 { font-family: var(--font-display); font-weight: 571; font-size: 24px; line-height: 1; letter-spacing: -0.04em; text-transform: capitalize; }
+  .t-h6 { font-family: var(--font-display); font-weight: 571; font-size: 20px; line-height: 1; letter-spacing: -0.04em; }
+  .t-body-lg { font-family: var(--font-sans); font-weight: 500; font-size: 20px; line-height: 1.1; letter-spacing: 0; }
+  .t-body-md { font-family: var(--font-sans); font-weight: 500; font-size: 16px; line-height: 1.3; letter-spacing: -0.02em; }
+  .t-body-sm { font-family: var(--font-sans); font-weight: 500; font-size: 12px; line-height: 1; letter-spacing: -0.02em; }
+  .t-button-1 { font-family: var(--font-sans); font-weight: 500; font-size: 14px; line-height: 1.2; letter-spacing: 0; }
+  .t-button-2 { font-family: var(--font-display); font-weight: 571; font-size: 14px; line-height: 1.1; letter-spacing: -0.04em; }
+
+  /* Signature frosted 2px border on filled controls */
+  .border-frost { border: 2px solid var(--border-frost); }
+
+  /* Themed 3-ellipse gradient band (lead-form section backdrop, simplified) */
+  .bg-accent-band {
+    background:
+      radial-gradient(60% 80% at 20% 10%, var(--accent-grad-a) 0%, transparent 70%),
+      radial-gradient(70% 90% at 80% 30%, var(--accent-grad-b) 0%, transparent 75%),
+      linear-gradient(180deg, var(--accent-grad-a) 0%, var(--accent-grad-b) 80%);
+  }
+}

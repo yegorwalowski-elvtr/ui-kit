@@ -1,370 +1,439 @@
-import type { ReactNode } from "react"
-
-import { ArrowUpRight, Camera, Sparkles } from "lucide-react"
+import { useEffect, useState, type ReactNode } from "react"
 
 import {
-  Badge,
-  BrandIcon,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Chip,
-  CtaButton,
-  DetailTile,
-  Heading,
-  Input,
-  Label,
-  SectionTabs,
-  SectionTabsContent,
-  Text,
-} from "../index"
+  AgreeRow,
+  Avatar,
+  AvatarStack,
+  BentoTile,
+  Breadcrumbs,
+  CategoryCard,
+  CircleCheckbox,
+  CourseCard,
+  CourseDetailCard,
+  DisclosureButton,
+  FaqItem,
+  Hairline,
+  InfoCard,
+  MetaChip,
+  PersonRow,
+  PhoneField,
+  PixelDecor,
+  RatingScoreCard,
+  RatingStars,
+  SearchBar,
+  SectionHeader,
+  SeeAllCoursesCard,
+  SiteButton,
+  SiteSwitch,
+  StatPair,
+  StoryCard,
+  SyllabusRow,
+  Tag,
+  TestimonialCard,
+  TooltipBubble,
+  TrustpilotBadge,
+  UnderlineField,
+} from "../v2"
+import { BrandIcon } from "../index"
 
-/* ---------------------------------------------------------------- helpers */
+/*
+ * All-components showcase for the 2026 redesign system.
+ * One page, grouped Foundations → Atoms → Forms → Molecules → Organisms,
+ * with a live category-theme switcher (data-theme on <html>).
+ */
 
-interface SwatchSpec {
-  figmaName: string
-  cssVar: string
-  hex: string
-  usage: string
-  swatchClass: string
-  labelClass: string
-  note?: string
-}
+const THEMES = ["green", "teal", "terracotta", "violet"] as const
+type Theme = (typeof THEMES)[number]
 
-const SWATCHES: SwatchSpec[] = [
-  {
-    figmaName: "Green-Lime Palette/Dark Teal",
-    cssVar: "--elvtr-dark-teal",
-    hex: "#004A4A",
-    usage: "Primary brand · hero bg · headings on light",
-    swatchClass: "bg-elvtr-dark-teal",
-    labelClass: "text-elvtr-light",
-  },
-  {
-    figmaName: "Lime accent",
-    cssVar: "--elvtr-lime",
-    hex: "#C8FF68",
-    usage: "Chips · highlight text on teal (pairs ONLY with Dark Teal)",
-    swatchClass: "bg-elvtr-lime",
-    labelClass: "text-elvtr-dark-teal",
-  },
-  {
-    figmaName: "Alice Blue",
-    cssVar: "--elvtr-alice-blue",
-    hex: "#EBF2F4",
-    usage: "Info-tile / card background",
-    swatchClass: "bg-elvtr-alice-blue",
-    labelClass: "text-elvtr-dark",
-  },
-  {
-    figmaName: "B&W/Dark",
-    cssVar: "--elvtr-dark",
-    hex: "#212121",
-    usage: "Body text",
-    swatchClass: "bg-elvtr-dark",
-    labelClass: "text-elvtr-light",
-  },
-  {
-    figmaName: "Light",
-    cssVar: "--elvtr-light",
-    hex: "#F3F3F3",
-    usage: "Light text on teal · light neutral",
-    swatchClass: "bg-elvtr-light",
-    labelClass: "text-elvtr-dark",
-  },
-  {
-    figmaName: "Sand",
-    cssVar: "--elvtr-sand",
-    hex: "#F2EFE9",
-    usage: "Page background behind cards",
-    swatchClass: "bg-elvtr-sand",
-    labelClass: "text-elvtr-dark",
-    note: "TODO confirm exact hex with Design Team",
-  },
-]
-
-function Swatch({ spec }: { spec: SwatchSpec }) {
+function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-lg border bg-elvtr-light">
-      <div
-        className={`flex h-24 items-end p-3 ${spec.swatchClass} ${spec.labelClass}`}
-      >
-        <span className="font-mono text-sm">{spec.hex}</span>
-      </div>
-      <div className="space-y-1 p-3">
-        <Text variant="p2" className="font-semibold">
-          {spec.figmaName}
-        </Text>
-        <Text variant="caption" as="p" className="font-mono">
-          {spec.cssVar}
-        </Text>
-        <Text variant="caption">{spec.usage}</Text>
-        {spec.note ? (
-          <Text variant="caption" className="text-destructive">
-            {spec.note}
-          </Text>
-        ) : null}
-      </div>
-    </div>
-  )
-}
-
-function DemoSection({
-  title,
-  description,
-  children,
-}: {
-  title: string
-  description?: string
-  children: ReactNode
-}) {
-  return (
-    <section className="space-y-5">
-      <div className="space-y-1.5">
-        <Heading level="h2" as="h2">
-          {title}
-        </Heading>
-        {description ? (
-          <Text variant="p2" className="max-w-2xl text-muted-foreground">
-            {description}
-          </Text>
-        ) : null}
+    <section id={id} className="flex flex-col gap-8 border-b border-line pb-16">
+      <div className="flex flex-col gap-2">
+        <h2 className="t-h3 text-ink">{title}</h2>
+        {note && <p className="t-body-md max-w-[720px] text-muted-warm">{note}</p>}
       </div>
       {children}
     </section>
   )
 }
 
-/* ------------------------------------------------------------------- app */
+function Cluster({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <span className="t-body-sm tracking-wide text-faint uppercase">{label}</span>
+      <div className="flex flex-wrap items-end gap-4">{children}</div>
+    </div>
+  )
+}
+
+const NEUTRALS: Array<[string, string, string]> = [
+  ["ink", "#21180D", "headlines, control labels"],
+  ["ink-cool", "#0E081E", "Figma Grayscale/100 — reconcile"],
+  ["body", "#393939", "body copy"],
+  ["dim", "#3C3C3C", "text on tints"],
+  ["muted", "#5A5A5A", "secondary text"],
+  ["faint", "#A3A3A3", "placeholders"],
+  ["page", "#F3F3F3", "page bands"],
+  ["control", "#F9F9F9", "raised controls"],
+  ["panel", "#F5F5F5", "panels"],
+  ["strip", "#E6E6E6", "footer band"],
+  ["neutral-btn", "#DCDCDE", "neutral buttons"],
+  ["error", "#EB4335", "form errors"],
+]
+
+const TYPE_RAMP: Array<[string, string, string]> = [
+  ["t-h1", "H1 Headline", "AF 442 · 80/0.9 · −4%"],
+  ["t-h2", "H2 Headline", "AF 442 · 60/0.9 · −4%"],
+  ["t-h3", "H3 Headline", "AF 442 · 40/0.9 · −4%"],
+  ["t-h4", "H4 Headline", "AF 571 · 32/0.9 · −4%"],
+  ["t-h5", "H5 Headline", "AF 571 · 24/1.0 · −4% · capitalize"],
+  ["t-h6", "H6 Headline", "AF 571 · 20/1.0 · −4%"],
+  ["t-body-lg", "Body Large", "NM 500 · 20/1.1"],
+  ["t-body-md", "Body Medium", "NM 500 · 16/1.3 · −2%"],
+  ["t-body-sm", "Body Small", "NM 500 · 12/1.0 · −2%"],
+  ["t-button-1", "Button 1", "NM 500 · 14/1.2"],
+  ["t-button-2", "Button 2", "AF 571 · 14/1.1 · −4%"],
+]
 
 export default function App() {
+  const [theme, setTheme] = useState<Theme>("green")
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme)
+  }, [theme])
+
   return (
-    <div className="min-h-screen">
-      {/* Hero — Dark Teal page hero with lime highlight, per brand */}
-      <header className="bg-elvtr-dark-teal">
-        <div className="mx-auto flex max-w-5xl flex-col items-start gap-6 px-6 py-16">
-          <Chip>
-            <Sparkles /> ELVTR DESIGN SYSTEM
-          </Chip>
-          <Heading
-            level="hero"
-            className="text-[clamp(48px,8vw,120px)] text-elvtr-light"
-          >
-            ELVTR <span className="text-elvtr-lime">UI Kit</span>
-          </Heading>
-          <Text variant="p1" className="max-w-xl text-elvtr-light/90">
-            React + TypeScript + Tailwind + shadcn/ui foundation carrying the
-            ELVTR brand tokens, fonts and icons. First consumer: the Photo
-            Booth service screens.
-          </Text>
+    <div className="min-h-screen bg-page pb-24 font-sans text-ink">
+      {/* Header / theme switcher */}
+      <header className="sticky top-0 z-10 border-b border-line bg-page/90 backdrop-blur">
+        <div className="mx-auto flex max-w-[1286px] flex-wrap items-center justify-between gap-4 px-6 py-3">
+          <div className="flex items-center gap-3">
+            <span className="rounded-lg bg-ink px-2 py-1 font-display text-xl text-white">|e|</span>
+            <div className="flex flex-col">
+              <span className="t-h6">ELVTR UI · 2026 system</span>
+              <span className="t-body-sm text-muted-warm">all components · docs/DESIGN-SYSTEM-PLAN.md</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="t-body-sm mr-1 text-muted-warm">category theme:</span>
+            {THEMES.map((t) => (
+              <SiteButton key={t} variant="nav" size="sm" active={theme === t} onClick={() => setTheme(t)}>
+                <span
+                  className="mr-1 inline-block size-3 rounded-full"
+                  style={{ background: { green: "#018362", teal: "#038892", terracotta: "#D05A36", violet: "#574791" }[t] }}
+                />
+                {t}
+              </SiteButton>
+            ))}
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl space-y-16 px-6 py-14">
-        {/* 1. Color tokens */}
-        <DemoSection
-          title="Color tokens"
-          description="Figma style names mapped verbatim to CSS variables and Tailwind utilities (bg-elvtr-*, plus shadcn semantic slots)."
+      <main className="mx-auto flex max-w-[1286px] flex-col gap-16 px-6 pt-12">
+        {/* ------------------------------------------------ Foundations */}
+        <Section
+          id="foundations"
+          title="Foundations"
+          note="Extracted verbatim from Figma. Licensed ABC Arizona Flare / Neue Montreal woff2 files are not in the repo yet — headings render in the serif fallback until they're dropped into public/fonts/."
         >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SWATCHES.map((spec) => (
-              <Swatch key={spec.cssVar} spec={spec} />
+          <Cluster label="Category accent (switch themes above)">
+            <div className="flex flex-col items-center gap-1">
+              <div className="size-16 rounded-2xl bg-accent-600" />
+              <span className="t-body-sm text-muted-warm">accent-600</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="size-16 rounded-2xl bg-accent-pressed" />
+              <span className="t-body-sm text-muted-warm">pressed</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="size-16 rounded-2xl bg-accent-300" />
+              <span className="t-body-sm text-muted-warm">accent-300</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="size-16 rounded-2xl bg-accent-100" />
+              <span className="t-body-sm text-muted-warm">accent-100</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="bg-accent-band size-16 rounded-2xl" />
+              <span className="t-body-sm text-muted-warm">gradient band</span>
+            </div>
+          </Cluster>
+          <Cluster label="Neutrals & semantic">
+            {NEUTRALS.map(([name, hex, use]) => (
+              <div key={name} className="flex w-24 flex-col gap-1">
+                <div className="h-12 w-full rounded-lg border border-line" style={{ background: hex }} />
+                <span className="t-body-sm text-ink">{name}</span>
+                <span className="t-body-sm text-faint">
+                  {hex} · {use}
+                </span>
+              </div>
             ))}
-          </div>
-        </DemoSection>
+          </Cluster>
+          <Cluster label="Type ramp">
+            <div className="flex w-full flex-col gap-4">
+              {TYPE_RAMP.map(([cls, label, spec]) => (
+                <div key={cls} className="flex items-baseline gap-6">
+                  <span className={`${cls} text-ink`}>{label}</span>
+                  <span className="t-body-sm whitespace-nowrap text-faint">{spec}</span>
+                </div>
+              ))}
+            </div>
+          </Cluster>
+          <Cluster label="Brand pixel decor">
+            <PixelDecor />
+            <PixelDecor color="var(--accent-600)" cells={[[0, 1], [1, 1], [1, 0], [2, 0], [3, 1]]} />
+          </Cluster>
+        </Section>
 
-        {/* 2. Type scale */}
-        <DemoSection
-          title="Type scale"
-          description="Display: ABC Arizona Flare 500 (fallback Georgia). UI/body: Neue Montreal 500 (fallback Inter/Helvetica/Arial). Licensed files go in public/fonts/ — see the README."
+        {/* ------------------------------------------------ Buttons */}
+        <Section
+          id="buttons"
+          title="Buttons"
+          note="cta/tint follow the category theme; hover = gradient + solid white border, pressed = bright fill (per Figma). Disabled/focus states are standardized — not drawn in Figma."
         >
-          <div className="space-y-8 rounded-lg border bg-elvtr-light p-6">
-            <div className="space-y-1 overflow-hidden">
-              <Text variant="caption">
-                Hero — Arizona Flare 500 · up to 200px / 0.9
-              </Text>
-              <Heading level="hero" as="p" className="text-[clamp(40px,7vw,96px)]">
-                Photo Booth
-              </Heading>
-            </div>
-            <div className="space-y-1">
-              <Text variant="caption">H1 — Arizona Flare 500 · 34px / 1.0 · ls -1px</Text>
-              <Heading level="h1" as="p">
-                Session Details for your cohort
-              </Heading>
-            </div>
-            <div className="space-y-1">
-              <Text variant="caption">H3 — Arizona Flare 500 · 22px (tile header)</Text>
-              <Heading level="h3" as="p">
-                Date &amp; Time
-              </Heading>
-            </div>
-            <div className="space-y-1">
-              <Text variant="caption">P2 — Neue Montreal 500 · 16px / 1.2 (body default)</Text>
-              <Text variant="p2" className="max-w-2xl">
-                Join us for a live walkthrough of the Photo Booth guide. Bring
-                your questions — the Student Care team will cover lighting,
-                poses and how to export your final shots.
-              </Text>
-            </div>
-          </div>
-        </DemoSection>
+          <Cluster label="CTA (Big buttons · Color pair)">
+            <SiteButton size="xl">Apply Now</SiteButton>
+            <SiteButton size="lg">More</SiteButton>
+            <SiteButton size="sm">Apply now</SiteButton>
+            <SiteButton size="xl" variant="tint">
+              Learn More
+            </SiteButton>
+            <SiteButton size="lg" disabled>
+              Disabled
+            </SiteButton>
+          </Cluster>
+          <Cluster label="Nav pills (Small buttons)">
+            <nav className="flex items-center gap-2">
+              <SiteButton variant="nav" size="sm" active>
+                Home
+              </SiteButton>
+              <SiteButton variant="nav" size="sm">
+                Courses
+              </SiteButton>
+              <SiteButton variant="nav" size="sm">
+                About Us
+              </SiteButton>
+              <SiteButton variant="nav" size="sm">
+                Blog
+              </SiteButton>
+              <SiteButton variant="nav" size="sm">
+                Reviews
+              </SiteButton>
+              <SiteButton variant="nav" size="sm">
+                🇺🇦
+              </SiteButton>
+            </nav>
+          </Cluster>
+          <Cluster label="Neutral / profile links / disclosure">
+            <SiteButton variant="neutral" size="lg">
+              Show More
+            </SiteButton>
+            <SiteButton variant="link" size="md">
+              <span className="text-linkedin-blue">in</span> LinkedIn
+            </SiteButton>
+            <SiteButton variant="link" size="md">
+              💼 Portfolio
+            </SiteButton>
+            <DisclosureButton aria-label="Expand" />
+            <DisclosureButton open aria-label="Collapse" />
+            <DisclosureButton size="big" />
+            <DisclosureButton size="big" open />
+          </Cluster>
+        </Section>
 
-        {/* 3. Chip */}
-        <DemoSection
-          title="Chip"
-          description="Lime pill with Dark Teal text — the cover-chip treatment. Lime never carries white text."
+        {/* ------------------------------------------------ Forms */}
+        <Section
+          id="forms"
+          title="Forms"
+          note="Underline fields with floating labels (Form State), circular consent checkbox (Agree state), catalog switch and mobile search+filter."
         >
-          <div className="flex flex-wrap items-center gap-3">
-            <Chip size="sm">NEW</Chip>
-            <Chip>HR MATERIALS</Chip>
-            <Chip>
-              <Camera /> PHOTO BOOTH
-            </Chip>
-            <Chip size="lg">Student Care</Chip>
-          </div>
-        </DemoSection>
-
-        {/* 4. CtaButton */}
-        <DemoSection
-          title="CtaButton"
-          description="Full-width Dark Teal bar with light text — the email primary action."
-        >
-          <div className="max-w-md space-y-3">
-            <CtaButton>
-              Join Google Classroom <ArrowUpRight />
-            </CtaButton>
-            <CtaButton disabled>Registration closed</CtaButton>
-          </div>
-        </DemoSection>
-
-        {/* 5. DetailTile grid with brand icons */}
-        <DemoSection
-          title="Session Details tiles"
-          description="DetailTile replicates the email info tiles: Alice Blue, 15px radius, vuesax-bulk icon, Arizona Flare 22px header, Neue Montreal 16px body."
-        >
-          <div className="grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
-            <DetailTile icon={<BrandIcon name="calendar" />} label="Date">
-              Wednesday, July 16
-            </DetailTile>
-            <DetailTile icon={<BrandIcon name="clock" />} label="Time">
-              2:00 PM EST · 60 minutes
-            </DetailTile>
-            <DetailTile icon={<BrandIcon name="people" />} label="Hosts">
-              ELVTR Student Care team
-            </DetailTile>
-            <DetailTile icon={<BrandIcon name="text" />} label="Topic">
-              HR Materials — Photo Booth walkthrough
-            </DetailTile>
-          </div>
-        </DemoSection>
-
-        {/* 6. SectionTabs */}
-        <DemoSection
-          title="SectionTabs"
-          description="Pill tab-row like the Photo Guide deck navigation. Active pill: Dark Teal with light text."
-        >
-          <SectionTabs
-            defaultValue="overview"
-            items={[
-              { value: "overview", label: "Overview" },
-              { value: "lighting", label: "Lighting" },
-              { value: "poses", label: "Poses" },
-              { value: "export", label: "Export" },
-            ]}
-          >
-            <SectionTabsContent value="overview">
-              <Text className="max-w-2xl">
-                The Photo Booth guide walks students through capturing a
-                professional headshot with nothing but a phone and a window.
-              </Text>
-            </SectionTabsContent>
-            <SectionTabsContent value="lighting">
-              <Text className="max-w-2xl">
-                Face the window, keep the light source in front of you, and
-                avoid overhead fixtures that cast hard shadows.
-              </Text>
-            </SectionTabsContent>
-            <SectionTabsContent value="poses">
-              <Text className="max-w-2xl">
-                Shoulders at a slight angle, chin forward and down, eyes to the
-                lens. Take ten frames and keep the best two.
-              </Text>
-            </SectionTabsContent>
-            <SectionTabsContent value="export">
-              <Text className="max-w-2xl">
-                Export at 2048px on the long edge, JPEG quality 90, and upload
-                through the Photo Booth service screen.
-              </Text>
-            </SectionTabsContent>
-          </SectionTabs>
-        </DemoSection>
-
-        {/* 7. shadcn base components on brand tokens */}
-        <DemoSection
-          title="shadcn/ui base"
-          description="Stock shadcn components picking up the ELVTR semantic slots: primary = Dark Teal, accent = lime, muted/card = Alice Blue, ring = Dark Teal, radius = 15px."
-        >
-          <div className="space-y-8">
-            <div className="space-y-3">
-              <Text variant="caption">Button variants</Text>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button>Primary</Button>
-                <Button variant="secondary">Secondary</Button>
-                <Button variant="outline">Outline</Button>
-                <Button variant="ghost">Ghost</Button>
-                <Button variant="link">Link</Button>
-                <Button variant="destructive">Destructive</Button>
-                <Button size="lg">Large</Button>
-                <Button size="sm">Small</Button>
-              </div>
+          <div className="grid max-w-[1166px] grid-cols-1 gap-10 rounded-3xl bg-white p-10 md:grid-cols-2">
+            <UnderlineField label="Name" />
+            <UnderlineField label="Email" defaultValue="anna@elvtr.com" />
+            <PhoneField />
+            <UnderlineField label="Email" error="Error message" defaultValue="anna@" />
+            <AgreeRow defaultChecked>
+              I agree to receive text messages from ELVTR at the phone number provided.
+            </AgreeRow>
+            <AgreeRow error>I agree to the Terms of Use and Privacy Policy.</AgreeRow>
+            <div className="flex items-center gap-6">
+              <CircleCheckbox defaultChecked aria-label="checked" />
+              <CircleCheckbox aria-label="empty" />
+              <CircleCheckbox error aria-label="error" />
+              <CircleCheckbox size="mobile" defaultChecked aria-label="mobile checked" />
+              <label className="t-button-1 flex items-center gap-2 text-ink">
+                <SiteSwitch defaultChecked /> Show past courses
+              </label>
             </div>
-
-            <div className="space-y-3">
-              <Text variant="caption">Badge variants</Text>
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge>Default</Badge>
-                <Badge variant="secondary">Secondary</Badge>
-                <Badge variant="outline">Outline</Badge>
-                <Badge variant="destructive">Destructive</Badge>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Text variant="caption">Card · Input · Label</Text>
-              <Card className="max-w-md">
-                <CardHeader>
-                  <CardTitle>Reserve your slot</CardTitle>
-                  <CardDescription>
-                    The Photo Booth is open Tuesday to Friday.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Label htmlFor="demo-email">Student email</Label>
-                  <Input
-                    id="demo-email"
-                    type="email"
-                    placeholder="you@student.elvtr.com"
-                  />
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">Request invite</Button>
-                </CardFooter>
-              </Card>
-            </div>
+            <SearchBar />
           </div>
-        </DemoSection>
+        </Section>
 
-        <footer className="border-t pt-6 pb-10">
-          <Text variant="caption">
-            Source of truth: ELVTR Figma — Photo-Booth guide
-            (4lATmsCWTIPFijqrJ3coMN) and E-mail Student Care
-            (GoIYuTuzY350FDmR5UYGrc).
-          </Text>
+        {/* ------------------------------------------------ Rating & people */}
+        <Section id="rating" title="Rating & people">
+          <Cluster label="Stars (plain / boxed / fraction) + Trustpilot badge">
+            <RatingStars value={5} />
+            <RatingStars value={3.6} />
+            <RatingStars value={4.5} variant="boxed" />
+            <RatingStars value={4.5} variant="boxed" size={14} />
+            <TrustpilotBadge />
+          </Cluster>
+          <Cluster label="Review-source score cards">
+            <RatingScoreCard score={4.7} reviews={532} source="Trustpilot" trustpilot />
+            <RatingScoreCard score={4.5} reviews={101} source="Google" />
+            <RatingScoreCard score={4.7} reviews={51} source="Facebook" />
+          </Cluster>
+          <Cluster label="Avatars / stack / person rows">
+            <Avatar name="Bruno Olivera" />
+            <Avatar name="Anna Jones" shape="circle" size={40} ring />
+            <AvatarStack names={["Ada L", "Mia K", "Tom B", "Ira D"]} counter="+13" />
+            <PersonRow name="Chey Brown" role="Position" linkedin />
+            <PersonRow name="Anna Jones" role="Costume Design course" photo={false} />
+          </Cluster>
+          <Cluster label="Stats">
+            <StatPair value="1050+" label="Graduates" />
+            <StatPair value="95%" label="Positive Feedback" />
+            <div className="bg-accent-band flex gap-8 rounded-2xl p-6">
+              <StatPair value="97+" label="Industry Experts" onDark />
+            </div>
+          </Cluster>
+        </Section>
+
+        {/* ------------------------------------------------ Tags & chips */}
+        <Section id="tags" title="Tags & chips">
+          <Cluster label="Status tags (Tags 17968:18810)">
+            <Tag status="bestseller">🏆 Best Seller</Tag>
+            <Tag status="lastcall">⏳ Last call</Tag>
+            <Tag status="new">✨ New course</Tag>
+            <Tag status="relaunch">🔄 Relaunch</Tag>
+            <Tag status="neutral">Career Preparation</Tag>
+            <Tag status="themed">Live online course</Tag>
+          </Cluster>
+          <Cluster label="Syllabus meta chips">
+            <MetaChip>
+              <BrandIcon name="calendar" /> Wed (3/18)
+            </MetaChip>
+            <MetaChip>
+              <BrandIcon name="clock" /> 5:30 PM GMT
+            </MetaChip>
+            <MetaChip themed>Assignment</MetaChip>
+          </Cluster>
+          <Cluster label="Breadcrumbs / tooltip / hairline">
+            <Breadcrumbs items={["Home", "Courses", "AI Engineer"]} />
+            <TooltipBubble>Join us in supporting the people of Ukraine</TooltipBubble>
+            <Hairline className="w-40 self-center" />
+          </Cluster>
+        </Section>
+
+        {/* ------------------------------------------------ Cards */}
+        <Section
+          id="cards"
+          title="Cards & tiles"
+          note="Photo/3D assets are not bundled — gradient and emoji placeholders stand in; the app supplies real imagery."
+        >
+          <Cluster label="Course cards + see-all (hover reveals instructor)">
+            <CourseCard
+              title="Sound Design for Film"
+              instructor="Luke Gibbson"
+              role="Sound designer & editor"
+              status="bestseller"
+              meta="2025"
+            />
+            <CourseCard
+              title="Sneaker Design"
+              instructor="Morgan Stauffer"
+              role="Ex-senior Creative Director at Nike"
+              status="new"
+              photoClass="bg-[linear-gradient(160deg,#144b41,#0c1f1b)]"
+              titleClass="font-display text-[26px] italic"
+            />
+            <CourseCard
+              title="Sport Psychology"
+              instructor="Emily Dais"
+              status="lastcall"
+              meta="7 seats left"
+              photoClass="bg-[linear-gradient(160deg,#5a3b73,#241236)]"
+            />
+            <SeeAllCoursesCard />
+          </Cluster>
+          <Cluster label="Course hero details / info tiles">
+            <CourseDetailCard
+              icon={<BrandIcon name="calendar" />}
+              title="Dates:"
+              rows={[
+                ["Start", "Mar 18"],
+                ["End", "May 27"],
+              ]}
+            />
+            <CourseDetailCard
+              icon={<BrandIcon name="clock" />}
+              title="Time"
+              rows={[
+                ["Tue & Thu", "6 PM PT"],
+                ["Live", "Online"],
+              ]}
+            />
+            <InfoCard title="Has an impressive 26 years of experience" className="max-w-[420px]">
+              Director of Production at Penguin Random House; previously led narrative teams at Blizzard.
+            </InfoCard>
+          </Cluster>
+          <Cluster label="Category / bento">
+            <CategoryCard
+              title="Gaming"
+              description="Find your niche in the industry, work on game-related projects."
+              art="🎮"
+              className="max-w-[416px]"
+            />
+            <BentoTile title="100% Live online classes" tone="lavender" icon="💻" wide className="w-[520px]" />
+            <BentoTile title="Community Discussion" tone="mint" icon="💬" className="w-[254px]" />
+            <BentoTile title="Certificate of Achievement" tone="cream" icon="📜" className="w-[254px]" />
+          </Cluster>
+          <Cluster label="Testimonials / stories">
+            <TestimonialCard
+              rating={4.8}
+              course="Game Writing"
+              quote="Elevating data science skills to business impact — the course gave me exactly the tools my studio needed."
+              name="Chey Brown"
+              role="Narrative Designer"
+            />
+            <StoryCard title="Elevating Data Science Skills" category="Data Science in Finance" cta="Chey Brown's Success story" />
+          </Cluster>
+        </Section>
+
+        {/* ------------------------------------------------ Accordions */}
+        <Section id="accordions" title="Accordions" note="FAQ + syllabus rows; open state takes the category tint.">
+          <div className="flex flex-col gap-3">
+            <FaqItem question="Do I need prior experience?" defaultOpen>
+              No — the course starts from fundamentals and ramps to production-grade projects with weekly
+              instructor feedback.
+            </FaqItem>
+            <FaqItem question="What happens if I miss a live session?" />
+            <SyllabusRow
+              number="01"
+              title="Introduction to the industry"
+              meta={["Wed (3/18)", "5:30 PM GMT"]}
+              lessonType="Workshop"
+              bullets={["Map the current market landscape", "Set up your toolchain"]}
+              defaultOpen
+            >
+              Kick-off session: expectations, tools and the final-project brief.
+            </SyllabusRow>
+            <SyllabusRow number="02" title="Research and references" meta={["Thu (3/19)", "5:30 PM GMT"]} />
+          </div>
+        </Section>
+
+        {/* ------------------------------------------------ Section header demo */}
+        <Section id="patterns" title="Section pattern">
+          <SectionHeader
+            title="Trusted, Admired & Loved"
+            subtitle="ELVTR courses offer 100% instructor driven content designed to give you practical knowledge."
+            action={<SiteButton size="lg">More</SiteButton>}
+          />
+        </Section>
+
+        <footer className="t-body-sm flex flex-col gap-1 text-faint">
+          <span>@elvtr/ui-kit · v2 preview · tokens: src/styles/theme-2026.css · spec: docs/DESIGN-SYSTEM-PLAN.md</span>
+          <span>Legacy Photo-Booth components remain exported from the package root; this page shows the 2026 set.</span>
         </footer>
       </main>
     </div>
