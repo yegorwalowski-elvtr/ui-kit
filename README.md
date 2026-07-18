@@ -40,6 +40,11 @@ and mapped onto the shadcn/ui semantic slots (light theme only for now).
 | B&W/Dark | `#212121` | `--elvtr-dark` | Body text | `foreground` |
 | Light | `#F3F3F3` | `--elvtr-light` | Light text on teal, light neutral | `primary-foreground` |
 | Sand | `#F2EFE9` | `--elvtr-sand` | Page background behind cards | `background` |
+| Good (deck sample) | `#A6D79D` | `--elvtr-good` | "PERFECT photo" badge green | — |
+| Bad (deck sample) | `#EA5233` | `--elvtr-bad` | "BAD photo" badge red-orange | `destructive` |
+| Warn | `#E3C87E` | `--elvtr-warn` | Warn accent (no deck token — deliberate on-palette warm tone) | — |
+| Warn soft | `#FAF1DC` | `--elvtr-warn-soft` | Warn surface tint | — |
+| Pill (deck sample) | `#E7DFE0` | `--elvtr-pill` | Neutral tab-nav pill fill | — |
 
 Rules baked into the components:
 
@@ -47,7 +52,8 @@ Rules baked into the components:
 - **Sand** was eyeballed from the email render — `TODO confirm exact hex with
   Design Team` (marked in `tokens.css`).
 - `border`/`input`/`muted-foreground` are derived tints of `#212121`;
-  `destructive` keeps a shadcn default red (no red exists in the palette).
+  `destructive` maps to the brand red-orange `--elvtr-bad` (the Photo-Booth
+  "BAD photo" badge color).
 
 ### Radii
 
@@ -83,10 +89,11 @@ ELVTR brand components in `src/components/elvtr/`:
 
 | Component | What it is |
 | --- | --- |
-| `Chip` | Lime pill with Dark Teal text (the "HR Materials" cover chip) |
+| `Chip` | Brand pill (the "HR Materials" cover chip) — `variant`: `accent` (lime, default) / `primary` (teal with lime text) / `pill` (neutral nav) / `good` / `bad` / `warn` |
 | `CtaButton` | Full-width Dark Teal pill bar with light text ("Join Google Classroom") |
 | `DetailTile` | Alice Blue rounded-15 tile: icon + Arizona Flare 22px header + Neue Montreal 16px body (the email "Session Details" tiles) |
 | `SectionTabs` / `SectionTabsContent` | Pill tab-row like the Photo Guide deck navigation |
+| `StatusGlyph` | Small circular `pass`/`fail`/`warn`/`pending` glyph for check/verdict UIs (aria-hidden by default) |
 | `Heading` / `Text` | Type primitives applying the brand scale (`hero`/`h1`–`h4`, `p1`/`p2`/`caption`) |
 | `BrandIcon` | Renders the bundled vuesax **bulk** brand SVGs by name: `text`, `people`, `calendar`, `clock` (recolorable via `color` prop) |
 

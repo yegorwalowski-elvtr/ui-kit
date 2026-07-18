@@ -47,6 +47,11 @@ export {
   type SectionTabsProps,
 } from "./components/elvtr/section-tabs"
 export {
+  StatusGlyph,
+  type StatusGlyphProps,
+  type StatusKind,
+} from "./components/elvtr/status-glyph"
+export {
   Heading,
   headingVariants,
   Text,

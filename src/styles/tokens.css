@@ -28,6 +28,18 @@
      TODO confirm exact hex with Design Team */
   --elvtr-sand: #f2efe9;
 
+  /* ---- Photo-Booth status palette (sampled from the Photo-Booth deck) ---- */
+  /* "PERFECT photo" badge green (sampled from the deck) */
+  --elvtr-good: #a6d79d;
+  /* "BAD photo" badge red-orange (sampled from the deck) */
+  --elvtr-bad: #ea5233;
+  /* Warn accent — no deck token, deliberate on-palette warm tone */
+  --elvtr-warn: #e3c87e;
+  /* Warn surface tint */
+  --elvtr-warn-soft: #faf1dc;
+  /* Neutral tab-nav pill fill (sampled from the deck) */
+  --elvtr-pill: #e7dfe0;
+
   /* ---- shadcn/ui semantic slots (light theme) ---------------------------- */
   --background: var(--elvtr-sand);
   --foreground: var(--elvtr-dark);
@@ -44,8 +56,8 @@
   --muted-foreground: rgb(33 33 33 / 0.64);
   --accent: var(--elvtr-lime);
   --accent-foreground: var(--elvtr-dark-teal);
-  /* Not in the ELVTR palette — shadcn default destructive red retained */
-  --destructive: #dc2626;
+  /* Brand red-orange — the Photo-Booth "BAD photo" badge color */
+  --destructive: var(--elvtr-bad);
   --destructive-foreground: var(--elvtr-light);
   /* Hairlines = brand dark at low opacity (derived, not a Figma token) */
   --border: rgb(33 33 33 / 0.12);
@@ -85,6 +97,11 @@
   --color-elvtr-dark: var(--elvtr-dark);
   --color-elvtr-light: var(--elvtr-light);
   --color-elvtr-sand: var(--elvtr-sand);
+  --color-elvtr-good: var(--elvtr-good);
+  --color-elvtr-bad: var(--elvtr-bad);
+  --color-elvtr-warn: var(--elvtr-warn);
+  --color-elvtr-warn-soft: var(--elvtr-warn-soft);
+  --color-elvtr-pill: var(--elvtr-pill);
 
   /* Typography */
   --font-display:

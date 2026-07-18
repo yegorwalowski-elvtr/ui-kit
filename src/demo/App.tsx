@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useState, type CSSProperties, type ReactNode } from "react"
 
 import {
   AgreeRow,
@@ -34,7 +34,7 @@ import {
   TrustpilotBadge,
   UnderlineField,
 } from "../v2"
-import { BrandIcon } from "../index"
+import { BrandIcon, Chip, StatusGlyph } from "../index"
 
 /*
  * All-components showcase for the 2026 redesign system.
@@ -80,6 +80,15 @@ const NEUTRALS: Array<[string, string, string]> = [
   ["neutral-btn", "#DCDCDE", "neutral buttons"],
   ["error", "#EB4335", "form errors"],
 ]
+
+/* Legacy Photo-Booth showcase only — restore the tokens.css slot values that
+   theme-2026.css remaps globally, so Chip/StatusGlyph render on-brand here. */
+const LEGACY_SLOTS = {
+  "--primary": "var(--elvtr-dark-teal)",
+  "--accent": "var(--elvtr-lime)",
+  "--accent-foreground": "var(--elvtr-dark-teal)",
+  "--foreground": "var(--elvtr-dark)",
+} as CSSProperties
 
 const TYPE_RAMP: Array<[string, string, string]> = [
   ["t-h1", "H1 Headline", "AF 442 · 80/0.9 · −4%"],
@@ -427,9 +436,35 @@ export default function App() {
           />
         </Section>
 
+        {/* ------------------------------------------------ Legacy Photo-Booth */}
+        <Section
+          id="legacy"
+          title="Legacy Photo-Booth"
+          note="Status additions to the legacy theme (src/styles/tokens.css): Chip color variants and StatusGlyph on the good/bad/warn/pill deck tokens. Rendered on the Sand background with the legacy semantic slots restored."
+        >
+          <div className="flex flex-col gap-8 rounded-3xl bg-elvtr-sand p-8" style={LEGACY_SLOTS}>
+            <Cluster label="Chip variants (accent / primary / pill / good / bad / warn)">
+              <Chip>HR Materials</Chip>
+              <Chip variant="primary">HR Materials</Chip>
+              <Chip variant="pill">Photo Guide</Chip>
+              <Chip variant="good">PERFECT photo</Chip>
+              <Chip variant="bad">BAD photo</Chip>
+              <Chip variant="warn">Needs review</Chip>
+            </Cluster>
+            <Cluster label="StatusGlyph (pass / fail / warn / pending)">
+              {(["pass", "fail", "warn", "pending"] as const).map((status) => (
+                <div key={status} className="flex items-center gap-2">
+                  <StatusGlyph status={status} />
+                  <span className="t-body-sm text-muted-warm">{status}</span>
+                </div>
+              ))}
+            </Cluster>
+          </div>
+        </Section>
+
         <footer className="t-body-sm flex flex-col gap-1 text-faint">
           <span>@elvtr/ui-kit · v2 preview · tokens: src/styles/theme-2026.css · spec: docs/DESIGN-SYSTEM-PLAN.md</span>
-          <span>Legacy Photo-Booth components remain exported from the package root; this page shows the 2026 set.</span>
+          <span>Legacy Photo-Booth components remain exported from the package root; the section above shows the status set.</span>
         </footer>
       </main>
     </div>
