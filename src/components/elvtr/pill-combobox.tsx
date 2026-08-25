@@ -62,8 +62,14 @@ function PillCombobox({
   const root = useDismiss(open, close)
 
   const listId = id ? `${id}-listbox` : undefined
-  const hasList = suggestions.length > 0
-  const showPopover = open && (hasList || loading || Boolean(emptyMessage))
+  // Once the field already holds the only remaining match there is nothing left
+  // to suggest — and keeping the popover open would sit it on top of whatever
+  // CTA follows the field.
+  const settled =
+    suggestions.length === 1 &&
+    suggestions[0].value.trim().toUpperCase() === value.trim().toUpperCase()
+  const hasList = suggestions.length > 0 && !settled
+  const showPopover = open && !settled && (hasList || loading || Boolean(emptyMessage))
 
   // A fresh result set invalidates the highlight.
   React.useEffect(() => setActiveIndex(-1), [suggestions])
