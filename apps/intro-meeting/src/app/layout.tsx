@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Intro Meeting · ELVTR",
+  title: "Meetball · ELVTR",
   description: "Build a cohort's ELVTR Introduction Meeting deck in Gamma.",
   robots: { index: false, follow: false },
 }

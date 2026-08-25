@@ -12,13 +12,13 @@ import { loginWithGoogle } from "./actions"
 import { LoginButton } from "./login-button"
 
 /*
- * Desktop-9 of "Intro Meeting UI" (node 5725:11407): the ceramic-door hero,
- * "please log in, honey" as a 56px display line (rendered capitalised by the
- * frame's text-transform), a 30px support line, and the Cola Orange "Log In".
+ * Desktop-9 of "Intro Meeting UI" (node 5725:11407): the ceramic cat-and-ball
+ * hero, "Welcome to Meetball" as a 56px display line, a 30px support line, and
+ * the Cola Orange "Log In".
  */
 
 export const metadata: Metadata = {
-  title: "Sign in · Intro Meeting",
+  title: "Sign in · Meetball",
   description: "Sign in with your ELVTR Google account.",
   robots: { index: false, follow: false },
 }
@@ -52,10 +52,10 @@ export default async function LoginPage({
     <HeroStage image="/hero/login.png">
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
-          Please log in, honey
+          Welcome to Meetball
         </Heading>
         <Text variant="lead">
-          Intro meeting decks are built from your ELVTR account, so we know whose run it is.
+          Type a cohort, get its intro meeting deck. Sign in with your ELVTR account to start.
         </Text>
         {error ? (
           <DisclaimerCard className="max-w-[760px]" role="alert">

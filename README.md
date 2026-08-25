@@ -2,9 +2,8 @@
 
 ELVTR design-system foundation: **React 18/19 + TypeScript + Tailwind CSS v4 +
 shadcn/ui**, carrying the ELVTR brand tokens, licensed fonts and vuesax-bulk
-brand icons. Product UIs (the **Photo Booth** service screens; the **Intro
-Meeting** app in [`apps/intro-meeting`](apps/intro-meeting)) are assembled from
-this kit.
+brand icons. Product UIs (the **Photo Booth** service screens; **Meetball**, the intro-meeting
+app in [`apps/intro-meeting`](apps/intro-meeting)) are assembled from this kit.
 
 ```bash
 npm install       # once — installs the kit and every app under apps/*
@@ -218,4 +217,4 @@ Apps live in `apps/*` as npm workspaces and consume the kit from source.
 
 | App | What it is |
 | --- | --- |
-| [`apps/intro-meeting`](apps/intro-meeting) | Skin for the `creative-gamma-intro-meetings` skill — ELVTR Google sign-in, cohort code in, Gamma deck link out |
+| [`apps/intro-meeting`](apps/intro-meeting) | **Meetball** — skin for the `creative-gamma-intro-meetings` skill: ELVTR Google sign-in, cohort code in, Gamma deck link out |

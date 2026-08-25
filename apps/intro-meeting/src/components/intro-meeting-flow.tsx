@@ -436,7 +436,7 @@ export function IntroMeetingFlow({
   }
 
   return (
-    <HeroStage image="/hero/login.png" topBar={topBar}>
+    <HeroStage image="/hero/door.png" topBar={topBar}>
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
           That Didn&rsquo;t Work

@@ -1,14 +1,18 @@
-# Intro Meeting
+# Meetball
 
 The user-facing skin for the `creative-gamma-intro-meetings` skill: someone on
 the team signs in with their ELVTR Google account, types a cohort code, and gets
 back a link to the cohort's Introduction Meeting deck in Gamma.
 
+**Meetball** is the product name (Figma, Desktop-9). The folder, the package
+(`@elvtr/intro-meeting`) and the `INTRO_MEETING_*` env vars still carry the old
+name — renaming those changes deploy configuration, so it is a separate step.
+
 Four screens, assembled from `@elvtr/ui-kit`:
 
 | Screen | Figma | What it does |
 | --- | --- | --- |
-| Sign in | `5725:11407` (Desktop-9) | Google sign-in, verified `@elvtr.com` only |
+| Sign in | `5725:11407` (Desktop-9) | "Welcome to Meetball" — Google sign-in, verified `@elvtr.com` only |
 | Cohort prompt | `5709:5198` (Desktop-1) | "Good {part of day}, {name}!" + the cohort field, which suggests as you type |
 | Colour pair | `5715:6596` (Desktop-6) | Only when Planna Cotta has no `color_scheme`. Two dropdowns with colour dots |
 | Ta-da | `5721:2` (Desktop-8) | The deck link, plus a disclaimer card per thing the run could not resolve |
@@ -164,8 +168,11 @@ All three require a session (or a preview switch).
 
 ## Hero art
 
-The four heroes in `public/hero/` are the Figma renders, background keyed out so
-they sit on the Mauve ground with no seam. To move to **transparent video**,
+The heroes in `public/hero/` are the Figma renders, background keyed out so they
+sit on the Mauve ground with no seam: `login.png` (the Meetball cat) on the
+welcome screen, `greeting.png` on the prompt, `colors.png` on the colour
+question, `done.png` on Ta-da, and `door.png` — the old welcome art — on the
+failure and mock-deck screens. To move to **transparent video**,
 pass `video={{ webm, hevc }}` to `HeroStage` alongside the still — see the UI
 kit README. Two encodes are needed (VP9/AV1-alpha WebM for Chrome/Firefox,
 HEVC-alpha MP4/MOV for Safari); a ProRes `.mov` on its own plays in neither, and
