@@ -1,14 +1,16 @@
 # @elvtr/ui-kit
 
-ELVTR design-system foundation: **React 18 + TypeScript + Tailwind CSS v4 +
+ELVTR design-system foundation: **React 18/19 + TypeScript + Tailwind CSS v4 +
 shadcn/ui**, carrying the ELVTR brand tokens, licensed fonts and vuesax-bulk
-brand icons. Product UIs (first consumer: the **Photo Booth** service screens)
-are assembled from this kit.
+brand icons. Product UIs (the **Photo Booth** service screens; the **Intro
+Meeting** app in [`apps/intro-meeting`](apps/intro-meeting)) are assembled from
+this kit.
 
 ```bash
-npm install    # once
-npm run dev    # demo/spec page at http://localhost:5173
-npm run build  # typecheck + production build of the demo
+npm install       # once — installs the kit and every app under apps/*
+npm run dev       # kit demo/spec page at http://localhost:5173
+npm run build     # icons + typecheck + production build of the demo
+npm run dev:intro # the Intro Meeting app (apps/intro-meeting)
 ```
 
 The demo page (`src/demo/App.tsx`) shows every token and component next to its
@@ -23,6 +25,7 @@ files — when in doubt, Figma wins:
 | --- | --- |
 | Photo-Booth guide | `4lATmsCWTIPFijqrJ3coMN` |
 | E-mail Student Care | `GoIYuTuzY350FDmR5UYGrc` |
+| Core Brand Guides 2.0 (page "Intro Meeting UI", 3D icons) | `RYsViepdOiw1cMDVPLgJ3Y` |
 
 ## Brand tokens
 
@@ -41,9 +44,26 @@ and mapped onto the shadcn/ui semantic slots (light theme only for now).
 | Light | `#F3F3F3` | `--elvtr-light` | Light text on teal, light neutral | `primary-foreground` |
 | Sand | `#F2EFE9` | `--elvtr-sand` | Page background behind cards | `background` |
 
+#### Cola Orange surface
+
+A second surface, from Core Brand Guides 2.0 ("Intro Meeting UI"). It does not
+touch the shadcn semantic slots — use the brand utilities directly.
+
+| Figma style / name | Hex | CSS variable | Used for |
+| --- | --- | --- | --- |
+| Brand/Cola Orange/Signal | `#FF8A00` | `--elvtr-cola-signal` | CTA ink |
+| Brand/Cola Orange/Latent | `#2E1A0C` | `--elvtr-cola-latent` | CTA ground |
+| Mauve (raw hex) | `#C2B2B3` | `--elvtr-mauve` | Page ground of those screens |
+| Cream (raw hex) | `#F9EFEC` | `--elvtr-cream` | Field ground on mauve |
+
+Mauve and Cream are **raw hex** in Figma, not published variables — `TODO
+tokenize with Design Team` (marked in `tokens.css`).
+
 Rules baked into the components:
 
 - **Lime pairs ONLY with Dark Teal** — never set white/light text on lime.
+- **Cola Orange Signal only ever sits on Cola Orange Latent** — never Signal on
+  the mauve page ground (fails contrast), never light text on Signal.
 - **Sand** was eyeballed from the email render — `TODO confirm exact hex with
   Design Team` (marked in `tokens.css`).
 - `border`/`input`/`muted-foreground` are derived tints of `#212121`;
@@ -60,8 +80,12 @@ Rules baked into the components:
 
 | Role | Typeface | Weight | Spec (from Figma) | Fallbacks |
 | --- | --- | --- | --- | --- |
-| Display / headings (`font-display`) | ABC Arizona Flare (Dinamo) | 500 | H1 34px/1.0, ls −1px; hero up to 200px/0.9; tile headers 22px | Georgia, 'Times New Roman', serif |
-| UI / body (`font-sans`) | Neue Montreal (Pangram Pangram) | 500 | P2 16px/1.2 | Inter, 'Helvetica Neue', Arial, sans-serif |
+| Display / headings (`font-display`) | ABC Arizona Flare (Dinamo) | 500 | H1 34px/1.0, ls −1px; hero up to 200px/0.9; tile headers 22px; `display` 56px/1.0, ls −2.24px | Georgia, 'Times New Roman', serif |
+| UI / body (`font-sans`) | Neue Montreal (Pangram Pangram) | 500 | P2 16px/1.2; `lead` 24px/1.2 | Inter, 'Helvetica Neue', Arial, sans-serif |
+
+`Heading level="display"` and `Text variant="lead"` are the Intro Meeting screen
+title and its supporting line. Both clamp down on narrow viewports — the Figma
+values are the desktop ceiling.
 
 ## Fonts (licensed — action required)
 
@@ -89,9 +113,18 @@ ELVTR brand components in `src/components/elvtr/`:
 | `SectionTabs` / `SectionTabsContent` | Pill tab-row like the Photo Guide deck navigation |
 | `Heading` / `Text` | Type primitives applying the brand scale (`hero`/`h1`–`h4`, `p1`/`p2`/`caption`) |
 | `BrandIcon` | Renders the bundled vuesax **bulk** brand SVGs by name: `text`, `people`, `calendar`, `clock` (recolorable via `color` prop) |
+| `HeroStage` (+ `HeroStageCopy`, `HeroStageActions`) | Full-viewport Cola Orange page shell: mauve ground, a levitating 3D hero object, centred copy and action block. `layout="split"` pins hero top / copy bottom; `layout="center"` groups them |
+| `ColaButton` | Cola Orange CTA — Signal ink on Latent ground, 12px radius, Arizona Flare 24px |
+| `PillInput` | Cream field on mauve — 12px radius, 24px type, placeholder at 50% B&W/Dark |
+| `PillSelect` | The same field as a native `<select>` with the Figma chevron pinned right |
 
 Generic product icons: use [`lucide-react`](https://lucide.dev) (shadcn
 default), already a dependency.
+
+Brand SVGs are inlined into `src/assets/icons/svg-sources.ts` by
+`npm run build:icons` (which `npm run build` runs first). The `.svg` files stay
+the source of truth designers export to — edit those, then regenerate. This
+replaced Vite's `?raw` imports so the kit builds under any bundler.
 
 Adding more shadcn components: `npx shadcn@latest add <component>` (a
 `components.json` is checked in). Note the CLI writes `@/lib/utils` imports —
@@ -108,7 +141,8 @@ apps like Photo Booth:
    - Workspace (preferred while iterating): put both apps in one npm
      workspace, or `"@elvtr/ui-kit": "file:../ui-kit"`.
    - Git dependency: `"@elvtr/ui-kit": "git+ssh://git@github.com/elvtr/ui-kit.git#main"`.
-2. **Install React 18** — `react`/`react-dom` are peer dependencies.
+2. **Install React 18 or 19** — `react`/`react-dom` are peer dependencies
+   (`^18.3.1 || ^19.0.0`).
 3. **Set up Tailwind v4** in the consumer (`@tailwindcss/vite` plugin) and in
    its main CSS file:
 
@@ -129,8 +163,9 @@ apps like Photo Booth:
    import { Button, Chip, CtaButton, DetailTile, BrandIcon } from "@elvtr/ui-kit"
    ```
 
-Note: `BrandIcon` uses Vite `?raw` SVG imports, so the consumer should build
-with Vite (or a bundler configured to inline `?raw` assets).
+No bundler-specific imports are used, so any bundler works. For Next.js, add
+`transpilePackages: ["@elvtr/ui-kit"]` — the kit ships TypeScript source.
+`apps/intro-meeting/next.config.ts` is a working example.
 
 ## Project layout
 
@@ -143,6 +178,19 @@ src/
   components/ui/         # shadcn/ui base components
   components/elvtr/      # brand components
   assets/icons/vuesax-bulk/  # brand SVG icons (text, people, calendar, clock)
+  assets/icons/ui/       # UI SVGs (select chevron)
+  assets/icons/svg-sources.ts  # GENERATED — npm run build:icons
   demo/                  # runnable spec page (npm run dev)
+scripts/                 # build:icons generator
 public/fonts/            # drop licensed .woff2 files here
+apps/
+  intro-meeting/         # Next.js app — the Intro Meeting skin (own README)
 ```
+
+## Apps
+
+Apps live in `apps/*` as npm workspaces and consume the kit from source.
+
+| App | What it is |
+| --- | --- |
+| [`apps/intro-meeting`](apps/intro-meeting) | Skin for the `creative-gamma-intro-meetings` skill — ELVTR Google sign-in, cohort code in, Gamma deck link out |

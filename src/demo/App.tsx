@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 
 import { ArrowUpRight, Camera, Sparkles } from "lucide-react"
 
@@ -13,11 +13,17 @@ import {
   CardHeader,
   CardTitle,
   Chip,
+  ColaButton,
   CtaButton,
   DetailTile,
   Heading,
+  HeroStage,
+  HeroStageActions,
+  HeroStageCopy,
   Input,
   Label,
+  PillInput,
+  PillSelect,
   SectionTabs,
   SectionTabsContent,
   Text,
@@ -85,6 +91,40 @@ const SWATCHES: SwatchSpec[] = [
     labelClass: "text-elvtr-dark",
     note: "TODO confirm exact hex with Design Team",
   },
+  {
+    figmaName: "Brand/Cola Orange/Signal",
+    cssVar: "--elvtr-cola-signal",
+    hex: "#FF8A00",
+    usage: "CTA ink — only ever on Cola Orange Latent",
+    swatchClass: "bg-elvtr-cola-signal",
+    labelClass: "text-elvtr-cola-latent",
+  },
+  {
+    figmaName: "Brand/Cola Orange/Latent",
+    cssVar: "--elvtr-cola-latent",
+    hex: "#2E1A0C",
+    usage: "CTA ground under Signal ink",
+    swatchClass: "bg-elvtr-cola-latent",
+    labelClass: "text-elvtr-cola-signal",
+  },
+  {
+    figmaName: "Mauve (Intro Meeting UI)",
+    cssVar: "--elvtr-mauve",
+    hex: "#C2B2B3",
+    usage: "Page ground of the Cola Orange screens",
+    swatchClass: "bg-elvtr-mauve",
+    labelClass: "text-elvtr-dark",
+    note: "Raw hex in Figma — TODO tokenize with Design Team",
+  },
+  {
+    figmaName: "Cream (Intro Meeting UI)",
+    cssVar: "--elvtr-cream",
+    hex: "#F9EFEC",
+    usage: "Field ground on Mauve",
+    swatchClass: "bg-elvtr-cream",
+    labelClass: "text-elvtr-dark",
+    note: "Raw hex in Figma — TODO tokenize with Design Team",
+  },
 ]
 
 function Swatch({ spec }: { spec: SwatchSpec }) {
@@ -109,6 +149,59 @@ function Swatch({ spec }: { spec: SwatchSpec }) {
           </Text>
         ) : null}
       </div>
+    </div>
+  )
+}
+
+/* ---------------------------------------- Cola Orange surface preview */
+
+/**
+ * Live preview of the Cola Orange screens (Core Brand Guides 2.0, "Intro
+ * Meeting UI"). `HeroStage` is a full-viewport shell, so the demo caps its
+ * height to keep it inside the page.
+ */
+function ColaSurfacePreview() {
+  const [cohort, setCohort] = useState("")
+  const [base, setBase] = useState("")
+
+  return (
+    <div className="overflow-hidden rounded-lg border">
+      <HeroStage
+        image="/hero-placeholder.svg"
+        imageFit="contain"
+        className="min-h-0 py-8"
+      >
+        <HeroStageCopy>
+          <Heading level="display" as="p" className="text-elvtr-dark">
+            Good Morning, Sabina!
+          </Heading>
+          <Text variant="lead">Which cohort needs an intro meeting today?</Text>
+          <PillInput
+            value={cohort}
+            onChange={(event) => setCohort(event.target.value)}
+            placeholder="Start typing a cohort code…"
+            aria-label="Cohort code"
+          />
+          <div className="flex flex-wrap justify-center gap-3">
+            <PillSelect
+              placeholder="Primary color"
+              aria-label="Primary color"
+              value={base}
+              onChange={(event) => setBase(event.target.value)}
+              options={[
+                { value: "blue", label: "Blue" },
+                { value: "green", label: "Green" },
+                { value: "purple", label: "Purple" },
+                { value: "white", label: "White" },
+              ]}
+            />
+          </div>
+        </HeroStageCopy>
+        <HeroStageActions>
+          <ColaButton>Create!</ColaButton>
+          <ColaButton disabled>Disabled</ColaButton>
+        </HeroStageActions>
+      </HeroStage>
     </div>
   )
 }
@@ -196,6 +289,23 @@ export default function App() {
               <Heading level="h1" as="p">
                 Session Details for your cohort
               </Heading>
+            </div>
+            <div className="space-y-1">
+              <Text variant="caption">
+                Display — Arizona Flare 500 · 56px / 1.0 · ls -2.24px (Intro
+                Meeting screen title; clamps down on narrow viewports)
+              </Text>
+              <Heading level="display" as="p" className="text-foreground">
+                Oops, No Colors Yet!
+              </Heading>
+            </div>
+            <div className="space-y-1">
+              <Text variant="caption">
+                Lead — Neue Montreal 500 · 24px / 1.2 (line under a display title)
+              </Text>
+              <Text variant="lead" className="max-w-2xl">
+                Which cohort needs an intro meeting today?
+              </Text>
             </div>
             <div className="space-y-1">
               <Text variant="caption">H3 — Arizona Flare 500 · 22px (tile header)</Text>
@@ -304,7 +414,15 @@ export default function App() {
           </SectionTabs>
         </DemoSection>
 
-        {/* 7. shadcn base components on brand tokens */}
+        {/* 7. Cola Orange surface */}
+        <DemoSection
+          title="Cola Orange surface"
+          description="The second ELVTR surface (Core Brand Guides 2.0, “Intro Meeting UI”): Mauve page ground, Cream fields, and a Cola Orange CTA — Signal ink on Latent ground, 12px radius. HeroStage is the full-viewport shell; here it is height-capped for the demo."
+        >
+          <ColaSurfacePreview />
+        </DemoSection>
+
+        {/* 8. shadcn base components on brand tokens */}
         <DemoSection
           title="shadcn/ui base"
           description="Stock shadcn components picking up the ELVTR semantic slots: primary = Dark Teal, accent = lime, muted/card = Alice Blue, ring = Dark Teal, radius = 15px."

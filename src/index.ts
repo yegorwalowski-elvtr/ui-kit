@@ -38,8 +38,18 @@ export {
   type BrandIconProps,
 } from "./components/elvtr/brand-icon"
 export { Chip, chipVariants, type ChipProps } from "./components/elvtr/chip"
+export { ColaButton, type ColaButtonProps } from "./components/elvtr/cola-button"
 export { CtaButton, type CtaButtonProps } from "./components/elvtr/cta-button"
 export { DetailTile, type DetailTileProps } from "./components/elvtr/detail-tile"
+export {
+  HeroStage,
+  HeroStageActions,
+  HeroStageCopy,
+  stageVariants,
+  type HeroStageProps,
+} from "./components/elvtr/hero-stage"
+export { PillInput } from "./components/elvtr/pill-input"
+export { PillSelect, type PillSelectProps } from "./components/elvtr/pill-select"
 export {
   SectionTabs,
   SectionTabsContent,

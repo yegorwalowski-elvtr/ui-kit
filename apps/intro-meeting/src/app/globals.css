@@ -1,0 +1,20 @@
+/*
+ * The ELVTR design tokens and the Tailwind theme both come from the UI kit —
+ * this app adds nothing to the palette. Editing colours or type here means
+ * they drift from Figma; change them in the kit instead.
+ */
+@import "@elvtr/ui-kit/styles.css";
+
+/* Let Tailwind generate the utilities used inside the kit's own components. */
+@source "../../../../src/**/*.{ts,tsx}";
+
+/*
+ * The kit's body default is the Green-Lime surface (Sand). These screens are
+ * the Cola Orange surface, so the page ground is Mauve — matching the baked-in
+ * background of the hero renders exactly.
+ */
+@layer base {
+  body {
+    @apply bg-elvtr-mauve;
+  }
+}

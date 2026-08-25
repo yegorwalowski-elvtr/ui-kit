@@ -5,16 +5,16 @@ import { cn } from "../../lib/utils"
 // vuesax "bulk" brand icons exported from the ELVTR Figma files.
 // The SVG sources use `fill="var(--fill-0, #004A4A)"`, so they render
 // Dark Teal by default and can be recolored via the `color` prop.
-import calendarRaw from "../../assets/icons/vuesax-bulk/calendar.svg?raw"
-import clockRaw from "../../assets/icons/vuesax-bulk/clock.svg?raw"
-import peopleRaw from "../../assets/icons/vuesax-bulk/people.svg?raw"
-import textRaw from "../../assets/icons/vuesax-bulk/text.svg?raw"
+//
+// Sources come from the generated `svg-sources` module rather than Vite's
+// `?raw` import, so the kit stays consumable from any bundler.
+import { svgSources } from "../../assets/icons/svg-sources"
 
 const BRAND_ICONS = {
-  calendar: calendarRaw,
-  clock: clockRaw,
-  people: peopleRaw,
-  text: textRaw,
+  calendar: svgSources["vuesax-bulk/calendar"],
+  clock: svgSources["vuesax-bulk/clock"],
+  people: svgSources["vuesax-bulk/people"],
+  text: svgSources["vuesax-bulk/text"],
 } as const
 
 export type BrandIconName = keyof typeof BRAND_ICONS

@@ -28,9 +28,23 @@ pnpm-debug.log*
 # Local env
 *.local
 
+# Next.js apps under apps/*
+.next
+out
+next-env.d.ts
+
+# Env files — the checked-in .env.example is the template
+.env
+.env.*
+!.env.example
+
 # Licensed font binaries are provided per-environment, not committed by default.
 # Remove these lines if the team decides to commit them to this private repo.
 public/fonts/*.woff2
 public/fonts/*.woff
 public/fonts/*.otf
 public/fonts/*.ttf
+apps/*/public/fonts/*.woff2
+apps/*/public/fonts/*.woff
+apps/*/public/fonts/*.otf
+apps/*/public/fonts/*.ttf
