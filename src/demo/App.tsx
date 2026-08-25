@@ -172,10 +172,10 @@ const DEMO_COHORTS = [
 
 /* Swatch hexes live in the consuming app — see apps/intro-meeting/src/lib/colors.ts. */
 const DEMO_BASES = [
-  { value: "blue", label: "Blue", color: "#03194A" },
-  { value: "green", label: "Green", color: "#004A4A" },
-  { value: "purple", label: "Purple", color: "#2B0C4A" },
-  { value: "white", label: "White", color: "#FFFFFF" },
+  { value: "blue", label: "Blue", color: "#102E9C" },
+  { value: "green", label: "Green", color: "#025453" },
+  { value: "purple", label: "Purple", color: "#58438A" },
+  { value: "white", label: "White", color: "#F9F9F9" },
 ]
 
 function ColaSurfacePreview() {

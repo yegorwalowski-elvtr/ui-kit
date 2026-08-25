@@ -85,16 +85,24 @@ so a hand-rolled request can't slip one through.
 
 ### Where the swatch colours come from
 
-**Planna Cotta does not carry them.** A cohort's `color_scheme` is a bare slug,
-and the only hex Planna has is `market.color` — the market brand colour, which
-the skill explicitly says is *not* the deck colour. Figma has no variable set
-with these eight names either: its Brand Colors collection is five
-Latent/Signal/Diffuse palettes.
+The design team, directly — and they had to, because nothing in the pipeline
+holds them. A cohort's Planna Cotta `color_scheme` is a bare slug; Planna's only
+hex is `market.color`, the market brand colour, which the skill says is *not*
+the deck colour; and Figma's Brand Colors collection is five
+Latent/Signal/Diffuse palettes under other names. This is the Intro Meeting
+template palette specifically:
 
-So the dots are mapped onto the nearest published ELVTR brand value in
-`SWATCHES` in [`src/lib/colors.ts`](src/lib/colors.ts) — each entry carries its
-source in a comment. That table is the only place to correct them, and the dots
-are cosmetic: the slug sent to the skill is what picks the Gamma template.
+| Base | | Accent | |
+| --- | --- | --- | --- |
+| Blue | `#102E9C` | Lime | `#E5F744` |
+| Green | `#025453` | Turquoise | `#9BEEE7` |
+| Purple | `#58438A` | Pink | `#EDAEF9` |
+| White | `#F9F9F9` | Light Blue | `#63ADF2` |
+
+They live in `SWATCHES` in [`src/lib/colors.ts`](src/lib/colors.ts) — the only
+place to correct them. The dots are cosmetic: the slug sent to the skill is what
+picks the Gamma template. White and Light Blue are the pale pair, so every dot
+keeps a hairline ring to stay visible on the Cream field.
 
 ## Disclaimers
 

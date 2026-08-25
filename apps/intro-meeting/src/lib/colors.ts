@@ -38,28 +38,30 @@ export type ColorScheme = (typeof COLOR_SCHEMES)[number]
 /*
  * Swatch hexes for the dropdown dots.
  *
- * Planna Cotta does NOT carry these: a cohort's `color_scheme` is a bare slug
- * (`purple_turquoise`) and the only hex Planna has is `market.color` — the
- * market brand colour, which the skill explicitly says is not the deck colour.
- * Figma has no variable set with these eight names either; its Brand Colors
- * collection is five Latent/Signal/Diffuse palettes.
+ * Supplied by the ELVTR design team (2026-08-25) — and they had to be, because
+ * nothing else holds them: a cohort's Planna Cotta `color_scheme` is a bare
+ * slug (`purple_turquoise`), Planna's only hex is `market.color` (the market
+ * brand colour, which the skill says is NOT the deck colour), and Figma's Brand
+ * Colors collection is five Latent/Signal/Diffuse palettes under different
+ * names. These are the Intro Meeting template palette specifically.
  *
- * So each dot is mapped onto the nearest published ELVTR brand value, sourced
- * below. THIS TABLE IS THE ONLY PLACE TO CORRECT THEM — the dots are cosmetic,
- * the slug sent to the skill is what actually picks the Gamma template.
- * TODO confirm all eight with Design Team.
+ * The dots are cosmetic: the slug sent to the skill is what picks the Gamma
+ * template. This table is the only place to correct them.
  */
 const SWATCHES: Record<ColorBase | ColorAccent, string> = {
-  // Bases are the dark half of a pair -> the palettes' Latent values.
-  blue: "#03194A", // Figma variable Brand Colors / Ice Ink / Latent
-  green: "#004A4A", // ui-kit --elvtr-dark-teal (the Green-Lime palette's dark)
-  purple: "#2B0C4A", // Figma variable Brand Colors / Purple Haze / Latent
-  white: "#FFFFFF", // no brand variable — plain white
-  // Accents are the bright half -> the palettes' Signal values.
-  lime: "#C8FF68", // ui-kit --elvtr-lime (Diamond Pine Signal #00FF85 reads green, not lime)
-  turquoise: "#00D5FF", // Figma variable Brand Colors / Ice Ink / Signal
-  pink: "#FF2E93", // Figma variable Brand Colors / Sour Cherry / Signal
-  light_blue: "#EBF9FF", // Figma variable Brand Colors / Ice Ink / Diffuse
+  // Bases — the deck's primary.
+  blue: "#102E9C",
+  green: "#025453",
+  purple: "#58438A",
+  // White + Light Blue is a single pair, and its two halves are the only
+  // near-white values here — the dots keep a hairline ring so both still read
+  // against the Cream field.
+  white: "#F9F9F9",
+  // Accents — the deck's secondary.
+  lime: "#E5F744",
+  turquoise: "#9BEEE7",
+  pink: "#EDAEF9",
+  light_blue: "#63ADF2",
 }
 
 /** Hex for a colour dot. Cosmetic only — see the note on SWATCHES. */
