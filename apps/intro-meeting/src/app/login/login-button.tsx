@@ -8,7 +8,7 @@ export function LoginButton() {
 
   return (
     <ColaButton type="submit" disabled={pending}>
-      {pending ? "Opening Google…" : "Login with Google"}
+      {pending ? "Opening Google…" : "Log In"}
     </ColaButton>
   )
 }

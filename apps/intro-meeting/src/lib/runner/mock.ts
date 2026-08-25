@@ -1,6 +1,8 @@
-import { isColorScheme, schemeLabel, type ColorScheme } from "@/lib/colors"
+import { isColorScheme, schemeLabel, COLOR_SCHEMES, type ColorScheme } from "@/lib/colors"
+import { PLANNA_SNAPSHOT } from "@/lib/planna-snapshot"
 
 import type {
+  CohortSuggestion,
   CohortSummary,
   IntroMeetingRunner,
   RunRequest,
@@ -11,29 +13,24 @@ import type {
  * Mock runner — the default implementation, so the whole flow is clickable with
  * `npm run dev` and nothing else configured.
  *
- * It fabricates NO cohort data: the "course title" is derived from whatever the
- * user typed and the instructor / PM come back null, because only the real skill
- * can read Planna Cotta. Every finished mock run carries a flag saying no deck
- * was actually generated.
+ * It invents no cohort data. Suggestions, course titles and the colour branch
+ * all come from `planna-snapshot.ts`, a dated snapshot of real Planna Cotta
+ * rows; a code that is not in it comes back "not found", exactly as Planna
+ * would answer. Every finished run carries a flag saying no deck was generated.
  *
- * Which branch you get is decided by the code you type (documented in README.md):
- *   - a code in SEEDED_SCHEMES  -> pair resolved from "Planna", no question
- *   - a code starting with FAIL -> the failure screen
- *   - anything else             -> the "Oops, No Colors Yet!" question
+ * Branches, all reachable from the UI:
+ *   - a snapshot cohort WITH a color_scheme  -> pair resolved, no question
+ *   - a snapshot cohort WITHOUT one          -> the "Oops, No Colors Yet!" question
+ *     (UK-COO3 and MDPM1 genuinely have none in Planna)
+ *   - anything else                          -> the failure screen
  */
-
-/** Cohorts that pretend to already carry a `color_scheme` in Planna Cotta. */
-const SEEDED_SCHEMES: Record<string, ColorScheme> = {
-  MDPM1: "purple_turquoise",
-  FSD3: "green_lime",
-  GD9: "blue_pink",
-}
 
 const DISCOVERY_MS = 2_600
 const BUILD_MS = 6_400
 
 interface MockRun {
   cohortCode: string
+  courseTitle: string
   requestedBy: string
   startedAt: number
   scheme: ColorScheme | null
@@ -60,11 +57,14 @@ const BUILD_STEPS = [
   "Writing in the dates, links and contacts…",
 ] as const
 
+function findCohort(code: string) {
+  return PLANNA_SNAPSHOT.find((cohort) => cohort.code === code) ?? null
+}
+
 function summarize(run: MockRun): CohortSummary {
   return {
     cohortCode: run.cohortCode,
-    // A mock cannot know the real title — say so rather than invent one.
-    courseTitle: `${run.cohortCode} (course title comes from Planna Cotta)`,
+    courseTitle: run.courseTitle,
     instructorName: null,
     programManager: null,
   }
@@ -73,6 +73,28 @@ function summarize(run: MockRun): CohortSummary {
 function stepAt(steps: readonly string[], elapsed: number, total: number): string {
   const index = Math.min(steps.length - 1, Math.floor((elapsed / total) * steps.length))
   return steps[Math.max(0, index)]
+}
+
+/*
+ * The gaps the skill reports instead of guessing. Planna rarely holds a Discord
+ * link, so that one always shows; the rest are keyed off the snapshot so the
+ * disclaimer stack is not uniformly the same on every cohort.
+ */
+function flagsFor(run: MockRun): string[] {
+  const flags = [
+    "No Discord link in Planna Cotta — the deck keeps the template's Discord button as shipped.",
+  ]
+
+  if (run.schemeSource === "user") {
+    flags.push(
+      `Planna Cotta had no colour pair for ${run.cohortCode}; the deck was built on the pair you picked.`,
+    )
+  }
+  flags.push(
+    "Mock run — no Gamma deck was generated. Point src/lib/runner/index.ts at a real implementation to get a live link.",
+  )
+
+  return flags
 }
 
 function stateOf(run: MockRun, now: number): RunState {
@@ -101,9 +123,7 @@ function stateOf(run: MockRun, now: number): RunState {
       gammaUrl: `/mock-deck?cohort=${encodeURIComponent(run.cohortCode)}`,
       colorPair: schemeLabel(run.scheme),
       colorPairSource: run.schemeSource,
-      flags: [
-        "Mock run — no Gamma deck was generated. Point RUNNER at a real implementation to get a live link.",
-      ],
+      flags: flagsFor(run),
     },
   }
 }
@@ -113,22 +133,53 @@ function newRunId(): string {
 }
 
 export const mockRunner: IntroMeetingRunner = {
+  async suggestCohorts(query: string) {
+    const needle = query.trim().toUpperCase()
+    if (needle.length === 0) return []
+
+    const matches: CohortSuggestion[] = PLANNA_SNAPSHOT.filter(
+      (cohort) =>
+        cohort.code.includes(needle) ||
+        cohort.courseTitle.toUpperCase().includes(needle),
+    )
+      // Codes that start with what was typed are the likelier intent.
+      .sort((a, b) => {
+        const aStarts = a.code.startsWith(needle) ? 0 : 1
+        const bStarts = b.code.startsWith(needle) ? 0 : 1
+        return aStarts - bStarts || a.code.localeCompare(b.code)
+      })
+      .slice(0, 8)
+      .map((cohort) => ({ cohortCode: cohort.code, courseTitle: cohort.courseTitle }))
+
+    return matches
+  },
+
+  async listColorSchemes() {
+    // Every pair that has a template. A real runner may narrow this to the
+    // distinct `color_scheme` values Planna actually holds, but must not go
+    // below them — a cohort can always be given a pair Planna has not used yet.
+    return [...COLOR_SCHEMES]
+  },
+
   async start(request: RunRequest) {
     const cohortCode = request.cohortCode.trim().toUpperCase()
     const runId = newRunId()
-    const seeded = SEEDED_SCHEMES[cohortCode] ?? null
     const startedAt = Date.now()
+    const known = findCohort(cohortCode)
+    const seeded =
+      known?.colorScheme && isColorScheme(known.colorScheme) ? known.colorScheme : null
 
     const run: MockRun = {
       cohortCode,
+      courseTitle: known?.courseTitle ?? cohortCode,
       requestedBy: request.requestedBy,
       startedAt,
       scheme: seeded,
       schemeSource: seeded ? "planna" : "user",
       resumedAt: seeded ? startedAt + DISCOVERY_MS : null,
-      failure: cohortCode.startsWith("FAIL")
-        ? `No cohort named ${cohortCode} in Planna Cotta. Check the code and try again.`
-        : null,
+      failure: known
+        ? null
+        : `No cohort named ${cohortCode} in Planna Cotta. Check the code and try again.`,
     }
 
     store.set(runId, run)

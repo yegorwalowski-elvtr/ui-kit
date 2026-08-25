@@ -12,18 +12,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  AccountChip,
   Chip,
   ColaButton,
   CtaButton,
   DetailTile,
+  DisclaimerCard,
   Heading,
   HeroStage,
   HeroStageActions,
   HeroStageCopy,
   Input,
   Label,
+  PillCombobox,
   PillInput,
   PillSelect,
+  SwatchSelect,
   SectionTabs,
   SectionTabsContent,
   Text,
@@ -160,9 +164,25 @@ function Swatch({ spec }: { spec: SwatchSpec }) {
  * Meeting UI"). `HeroStage` is a full-viewport shell, so the demo caps its
  * height to keep it inside the page.
  */
+const DEMO_COHORTS = [
+  { value: "GD10", detail: "Game Design with Unreal Engine 5" },
+  { value: "GWA2", detail: "Advanced Game Writing" },
+  { value: "UK-GW11", detail: "Video Game Writing" },
+]
+
+/* Swatch hexes live in the consuming app — see apps/intro-meeting/src/lib/colors.ts. */
+const DEMO_BASES = [
+  { value: "blue", label: "Blue", color: "#03194A" },
+  { value: "green", label: "Green", color: "#004A4A" },
+  { value: "purple", label: "Purple", color: "#2B0C4A" },
+  { value: "white", label: "White", color: "#FFFFFF" },
+]
+
 function ColaSurfacePreview() {
   const [cohort, setCohort] = useState("")
+  const [plain, setPlain] = useState("")
   const [base, setBase] = useState("")
+  const [nativeBase, setNativeBase] = useState("")
 
   return (
     <div className="overflow-hidden rounded-lg border">
@@ -170,32 +190,54 @@ function ColaSurfacePreview() {
         image="/hero-placeholder.svg"
         imageFit="contain"
         className="min-h-0 py-8"
+        topBar={<AccountChip initials="KS" aria-label="Account: ks@elvtr.com" />}
       >
         <HeroStageCopy>
           <Heading level="display" as="p" className="text-elvtr-dark">
             Good Morning, Sabina!
           </Heading>
           <Text variant="lead">Which cohort needs an intro meeting today?</Text>
-          <PillInput
+
+          {/* PillCombobox — suggests as you type; the caller supplies matches. */}
+          <PillCombobox
             value={cohort}
-            onChange={(event) => setCohort(event.target.value)}
+            onValueChange={setCohort}
+            suggestions={DEMO_COHORTS.filter((item) =>
+              item.value.toUpperCase().startsWith(cohort.trim().toUpperCase())
+            )}
+            emptyMessage="No cohort matches that yet."
             placeholder="Start typing a cohort code…"
             aria-label="Cohort code"
           />
+
+          {/* SwatchSelect — a listbox, because option rows carry colour dots. */}
           <div className="flex flex-wrap justify-center gap-3">
-            <PillSelect
+            <SwatchSelect
               placeholder="Primary color"
               aria-label="Primary color"
               value={base}
-              onChange={(event) => setBase(event.target.value)}
-              options={[
-                { value: "blue", label: "Blue" },
-                { value: "green", label: "Green" },
-                { value: "purple", label: "Purple" },
-                { value: "white", label: "White" },
-              ]}
+              onValueChange={setBase}
+              options={DEMO_BASES}
+            />
+            <PillSelect
+              placeholder="Native select"
+              aria-label="Native select"
+              value={nativeBase}
+              onChange={(event) => setNativeBase(event.target.value)}
+              options={DEMO_BASES.map(({ value, label }) => ({ value, label }))}
             />
           </div>
+
+          <PillInput
+            value={plain}
+            onChange={(event) => setPlain(event.target.value)}
+            placeholder="Plain PillInput, no suggestions"
+            aria-label="Plain field"
+          />
+
+          <DisclaimerCard className="max-w-[680px]">
+            No Discord link in Planna Cotta — the deck keeps the template&rsquo;s button.
+          </DisclaimerCard>
         </HeroStageCopy>
         <HeroStageActions>
           <ColaButton>Create!</ColaButton>
@@ -417,7 +459,7 @@ export default function App() {
         {/* 7. Cola Orange surface */}
         <DemoSection
           title="Cola Orange surface"
-          description="The second ELVTR surface (Core Brand Guides 2.0, “Intro Meeting UI”): Mauve page ground, Cream fields, and a Cola Orange CTA — Signal ink on Latent ground, 12px radius. HeroStage is the full-viewport shell; here it is height-capped for the demo."
+          description="The second ELVTR surface (Core Brand Guides 2.0, “Intro Meeting UI”): Mauve page ground, Cream fields, a Cola Orange CTA (Signal ink on Latent ground, 12px radius), the account chip and the Cream disclaimer card. HeroStage is the full-viewport shell; here it is height-capped for the demo."
         >
           <ColaSurfacePreview />
         </DemoSection>

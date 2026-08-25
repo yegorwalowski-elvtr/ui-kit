@@ -3,39 +3,46 @@
 import * as React from "react"
 import {
   ColaButton,
+  DisclaimerCard,
   HeroStage,
   HeroStageActions,
   HeroStageCopy,
   Heading,
-  PillInput,
-  PillSelect,
+  PillCombobox,
+  SwatchSelect,
   Text,
+  type ComboboxSuggestion,
 } from "@elvtr/ui-kit"
 
+import { AccountMenu } from "@/components/account-menu"
 import { parseCohortCode } from "@/lib/cohort-code"
 import {
-  accentsFor,
-  basesFor,
+  accentsIn,
+  basesIn,
   colorLabel,
+  colorSwatch,
   isColorScheme,
   toScheme,
   type ColorAccent,
   type ColorBase,
+  type ColorScheme,
 } from "@/lib/colors"
 import { partOfDay } from "@/lib/greeting"
-import type { RunState } from "@/lib/runner/types"
+import type { CohortSuggestion, RunState } from "@/lib/runner/types"
 
 /*
- * The four Intro Meeting screens from Core Brand Guides 2.0 ("Intro Meeting
- * UI", nodes 5709:5198 / 5715:6596 / 5715:6619), plus the two states the
- * mockups do not cover but a real run needs: work-in-progress and failure.
+ * The screens of Core Brand Guides 2.0, "Intro Meeting UI": Desktop-1
+ * (5709:5198) prompt, Desktop-6 (5715:6596) colour pair, Desktop-8 (5721:2)
+ * Ta-da with disclaimers — plus the two states the mockups do not draw but a
+ * real run needs: work in progress and failure.
  *
- * The colour question is NOT asked up front on purpose — the skill reads the
+ * The colour question is NOT asked up front on purpose: the skill reads the
  * pair from the cohort's Planna Cotta `color_scheme` and only asks when that
  * field is empty. Asking every time would override Planna.
  */
 
 const POLL_MS = 1_200
+const SUGGEST_DEBOUNCE_MS = 180
 
 type Phase =
   | { kind: "prompt" }
@@ -72,17 +79,71 @@ async function readError(response: Response, fallback: string) {
   }
 }
 
-export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
+export function IntroMeetingFlow({
+  firstName,
+  email,
+  fullName,
+  onSignOut,
+}: {
+  firstName: string | null
+  email: string | null
+  fullName: string | null
+  onSignOut: () => void
+}) {
   const [phase, setPhase] = React.useState<Phase>({ kind: "prompt" })
   const [cohortCode, setCohortCode] = React.useState("")
+  const [suggestions, setSuggestions] = React.useState<ComboboxSuggestion[]>([])
+  const [suggesting, setSuggesting] = React.useState(false)
   const [inputError, setInputError] = React.useState<string | null>(null)
   const [runId, setRunId] = React.useState<string | null>(null)
+  const [schemes, setSchemes] = React.useState<ColorScheme[]>([])
   const [base, setBase] = React.useState<ColorBase | "">("")
   const [accent, setAccent] = React.useState<ColorAccent | "">("")
   const [busy, setBusy] = React.useState(false)
 
-  // Poll while a run is in flight. Stops as soon as the run needs an answer,
-  // finishes or fails, so an idle tab makes no requests.
+  const topBar = email ? (
+    <AccountMenu email={email} name={fullName} onSignOut={onSignOut} />
+  ) : null
+
+  /* ---- cohort suggestions, debounced so a fast typist makes one request ---- */
+  React.useEffect(() => {
+    const query = cohortCode.trim()
+    if (query.length === 0) {
+      setSuggestions([])
+      setSuggesting(false)
+      return
+    }
+
+    setSuggesting(true)
+    const controller = new AbortController()
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/cohorts?q=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+          cache: "no-store",
+        })
+        if (!response.ok) return
+        const body: { suggestions: CohortSuggestion[] } = await response.json()
+        setSuggestions(
+          body.suggestions.map((item) => ({
+            value: item.cohortCode,
+            detail: item.courseTitle,
+          })),
+        )
+      } catch {
+        // Aborted or offline: leave the previous list rather than blanking it.
+      } finally {
+        setSuggesting(false)
+      }
+    }, SUGGEST_DEBOUNCE_MS)
+
+    return () => {
+      controller.abort()
+      window.clearTimeout(timer)
+    }
+  }, [cohortCode])
+
+  /* ---- poll while a run is in flight; stops the moment it is not ---- */
   const polling = runId !== null && phase.kind === "running"
   React.useEffect(() => {
     if (!polling || runId === null) return
@@ -111,10 +172,33 @@ export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
     }
   }, [polling, runId])
 
+  /* ---- the colour options come from the server, not a list in the UI ---- */
+  const needsColors = phase.kind === "colors"
+  React.useEffect(() => {
+    if (!needsColors || schemes.length > 0) return
+
+    let cancelled = false
+    void (async () => {
+      try {
+        const response = await fetch("/api/color-schemes", { cache: "no-store" })
+        if (!response.ok || cancelled) return
+        const body: { schemes: ColorScheme[] } = await response.json()
+        if (!cancelled) setSchemes(body.schemes)
+      } catch {
+        // Leave the dropdowns empty; the Go button stays disabled.
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [needsColors, schemes.length])
+
   function reset() {
     setPhase({ kind: "prompt" })
     setRunId(null)
     setCohortCode("")
+    setSuggestions([])
     setInputError(null)
     setBase("")
     setAccent("")
@@ -180,11 +264,11 @@ export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
   if (phase.kind === "prompt" || phase.kind === "running") {
     const running = phase.kind === "running"
     return (
-      <HeroStage image="/hero/greeting.png">
+      <HeroStage image="/hero/greeting.png" topBar={topBar}>
         <HeroStageCopy>
           <Heading level="display" className="text-elvtr-dark capitalize">
             {/* Part of day comes from the viewer's clock, so the server render
-                and the client render legitimately differ on the first paint. */}
+                and the first client render legitimately differ. */}
             <span suppressHydrationWarning>
               {firstName
                 ? `Good ${partOfDay(new Date())}, ${firstName}!`
@@ -207,14 +291,17 @@ export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
                 <label className="sr-only" htmlFor="cohort-code">
                   Cohort code
                 </label>
-                <PillInput
+                <PillCombobox
                   id="cohort-code"
                   name="cohortCode"
                   value={cohortCode}
-                  onChange={(event) => {
-                    setCohortCode(event.target.value)
+                  onValueChange={(next) => {
+                    setCohortCode(next)
                     setInputError(null)
                   }}
+                  suggestions={suggestions}
+                  loading={suggesting}
+                  emptyMessage="No cohort in Planna Cotta matches that yet."
                   placeholder="Start typing a cohort code…"
                   autoComplete="off"
                   autoCapitalize="characters"
@@ -252,12 +339,12 @@ export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
   }
 
   if (phase.kind === "colors") {
-    const accentOptions = accentsFor(base)
-    const baseOptions = basesFor(accent)
+    const baseOptions = basesIn(schemes, accent)
+    const accentOptions = accentsIn(schemes, base)
     const complete = base !== "" && accent !== "" && isColorScheme(toScheme(base, accent))
 
     return (
-      <HeroStage image="/hero/colors.png">
+      <HeroStage image="/hero/colors.png" topBar={topBar}>
         <HeroStageCopy>
           <Heading level="display" className="text-elvtr-dark capitalize">
             Oops, No Colors Yet!
@@ -273,26 +360,30 @@ export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
             onSubmit={submitColors}
             className="flex w-full max-w-[522px] flex-wrap items-center justify-center gap-[12px]"
           >
-            <PillSelect
-              placeholder="Primary color"
+            <SwatchSelect
+              id="primary-color"
               aria-label="Primary color"
+              placeholder="Primary color"
               value={base}
               disabled={busy}
-              onChange={(event) => setBase(event.target.value as ColorBase)}
+              onValueChange={(next) => setBase(next as ColorBase)}
               options={baseOptions.map((option) => ({
                 value: option,
                 label: colorLabel(option),
+                color: colorSwatch(option),
               }))}
             />
-            <PillSelect
-              placeholder="Secondary color"
+            <SwatchSelect
+              id="secondary-color"
               aria-label="Secondary color"
+              placeholder="Secondary color"
               value={accent}
               disabled={busy}
-              onChange={(event) => setAccent(event.target.value as ColorAccent)}
+              onValueChange={(next) => setAccent(next as ColorAccent)}
               options={accentOptions.map((option) => ({
                 value: option,
                 label: colorLabel(option),
+                color: colorSwatch(option),
               }))}
             />
           </form>
@@ -309,23 +400,20 @@ export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
 
   if (phase.kind === "done") {
     return (
-      <HeroStage image="/hero/done.png" layout="center">
+      <HeroStage image="/hero/done.png" topBar={topBar}>
         <HeroStageCopy>
           <Heading level="display" className="text-elvtr-dark capitalize">
             Ta-da!
           </Heading>
           <Text variant="lead">Your intro meeting is ready to go, honey</Text>
           {phase.flags.length > 0 ? (
-            <ul className="flex max-w-[720px] flex-col gap-[8px] text-left">
+            <div className="flex flex-col items-center gap-[12px]">
               {phase.flags.map((flag) => (
-                <li
-                  key={flag}
-                  className="rounded-[12px] bg-elvtr-cream px-[20px] py-[12px] font-sans text-[16px] leading-[1.3] font-medium text-elvtr-dark"
-                >
+                <DisclaimerCard key={flag} className="max-w-[760px]">
                   {flag}
-                </li>
+                </DisclaimerCard>
               ))}
-            </ul>
+            </div>
           ) : null}
         </HeroStageCopy>
 
@@ -348,14 +436,14 @@ export function IntroMeetingFlow({ firstName }: { firstName: string | null }) {
   }
 
   return (
-    <HeroStage image="/hero/failed.png" imageFit="contain" layout="center">
+    <HeroStage image="/hero/login.png" topBar={topBar}>
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
           That Didn&rsquo;t Work
         </Heading>
-        <Text variant="lead" role="alert">
+        <DisclaimerCard className="max-w-[760px]" role="alert">
           {phase.error}
-        </Text>
+        </DisclaimerCard>
       </HeroStageCopy>
 
       <HeroStageActions>

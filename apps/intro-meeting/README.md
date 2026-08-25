@@ -8,10 +8,13 @@ Four screens, assembled from `@elvtr/ui-kit`:
 
 | Screen | Figma | What it does |
 | --- | --- | --- |
-| Sign in | — (built from the same parts) | Google sign-in, verified `@elvtr.com` only |
-| Cohort prompt | `5709:5198` | "Good {part of day}, {name}!" + the cohort code field |
-| Colour pair | `5715:6596` | Only when Planna Cotta has no `color_scheme` for the cohort |
-| Ta-da | `5715:6619` | The deck link, plus anything the run flagged |
+| Sign in | `5725:11407` (Desktop-9) | Google sign-in, verified `@elvtr.com` only |
+| Cohort prompt | `5709:5198` (Desktop-1) | "Good {part of day}, {name}!" + the cohort field, which suggests as you type |
+| Colour pair | `5715:6596` (Desktop-6) | Only when Planna Cotta has no `color_scheme`. Two dropdowns with colour dots |
+| Ta-da | `5721:2` (Desktop-8) | The deck link, plus a disclaimer card per thing the run could not resolve |
+
+Every screen carries the account chip from `5722:11404` in the top right —
+initials, and the way out.
 
 Design source: Core Brand Guides 2.0 (`RYsViepdOiw1cMDVPLgJ3Y`), page
 **Intro Meeting UI**. Two more states the mockups don't cover — work in progress
@@ -58,6 +61,15 @@ Two escape hatches, both off by default:
 
 In either preview mode a run is attributed to `preview@elvtr.com`.
 
+## Cohort suggestions
+
+The field is a combobox: what you type goes to `GET /api/cohorts?q=` (debounced
+180ms, previous request aborted) and the matches drop down with their course
+title underneath. A real runner asks Planna Cotta `list_cohorts(q=…)`.
+
+Free text still submits — a cohort that Planna has not published yet can be
+typed in full rather than blocked by the suggestion list.
+
 ## The colour question
 
 The skill reads the pair from the cohort's Planna Cotta `color_scheme`
@@ -65,10 +77,32 @@ The skill reads the pair from the cohort's Planna Cotta `color_scheme`
 is empty — typical for cohorts still in `planned`. Asking every time would
 override Planna, which is why there is no colour picker on the first screen.
 
-Only nine pairs have a template, so the two dropdowns constrain each other:
-Purple + Pink has none, and White pairs only with Light Blue (and Light Blue
-only with White). `src/lib/colors.ts` holds that list; the API rejects an
-invalid pair as well, so a hand-rolled request can't slip one through.
+The two dropdowns are built from `GET /api/color-schemes` (the runner's view of
+which pairs exist), not from a list hardcoded in the UI, and each side filters
+the other — so an impossible pair can never be assembled. Purple + Pink has no
+template, and White pairs only with Light Blue. The API re-checks the pair too,
+so a hand-rolled request can't slip one through.
+
+### Where the swatch colours come from
+
+**Planna Cotta does not carry them.** A cohort's `color_scheme` is a bare slug,
+and the only hex Planna has is `market.color` — the market brand colour, which
+the skill explicitly says is *not* the deck colour. Figma has no variable set
+with these eight names either: its Brand Colors collection is five
+Latent/Signal/Diffuse palettes.
+
+So the dots are mapped onto the nearest published ELVTR brand value in
+`SWATCHES` in [`src/lib/colors.ts`](src/lib/colors.ts) — each entry carries its
+source in a comment. That table is the only place to correct them, and the dots
+are cosmetic: the slug sent to the skill is what picks the Gamma template.
+
+## Disclaimers
+
+The skill surfaces what it could not resolve rather than guessing — no Discord
+link in Planna, no Google Classroom link, a program manager who is not in the
+PM directory, a course end date it could not confirm. Those come back as
+`result.flags` and each renders as a `DisclaimerCard` on the Ta-da screen, so
+nothing silently ships wrong.
 
 ## Runner: mock today, real later
 
@@ -77,9 +111,10 @@ Nothing here runs the skill yet. `src/lib/runner/` is the seam:
 - `types.ts` — the contract (`IntroMeetingRunner`: `start`, `poll`,
   `submitColors`) and the run states.
 - `mock.ts` — the default. Times out a plausible sequence of steps and
-  fabricates **no** cohort data: the course title is derived from what you
-  typed, instructor and PM come back `null`, and every finished run carries a
-  flag saying no deck was generated. "Open Presentation" lands on `/mock-deck`,
+  fabricates **no** cohort data: suggestions, course titles and the colour
+  branch all come from `planna-snapshot.ts`, a dated snapshot of real Planna
+  rows, and instructor/PM come back `null`. Every finished run carries a flag
+  saying no deck was generated, and "Open Presentation" lands on `/mock-deck`,
   which says the same thing.
 - `index.ts` — the one line to change when a real runner exists.
 
@@ -87,9 +122,9 @@ Which branch the mock takes is decided by the code you type:
 
 | You type | You get |
 | --- | --- |
-| `MDPM1`, `FSD3`, `GD9` | Pair "resolved from Planna" — straight to the build |
-| anything else | The "Oops, No Colors Yet!" question |
-| `FAIL…` (e.g. `FAILX`) | The failure screen |
+| a snapshot cohort **with** a `color_scheme` (`GD10`, `AIM9`, `UK-CD7`…) | Pair resolved from "Planna" — straight to the build |
+| a snapshot cohort **without** one (`UK-COO3`, `MDPM1`) | The "Oops, No Colors Yet!" question — both genuinely have none in Planna |
+| anything not in the snapshot (`ZZZ9`) | The failure screen, worded as Planna would |
 | `not a code!` | Client-side validation on the field |
 
 A real runner has to run the skill with the cohort code, relay the colour
@@ -109,6 +144,8 @@ All three require a session (or a preview switch).
 
 | Route | Body | Returns |
 | --- | --- | --- |
+| `GET /api/cohorts?q=` | — | `{ suggestions: [{ cohortCode, courseTitle }] }` |
+| `GET /api/color-schemes` | — | `{ schemes: ["purple_turquoise", …] }` |
 | `POST /api/runs` | `{ cohortCode }` | `{ runId, state }` |
 | `GET /api/runs/{id}` | — | `{ runId, state }` |
 | `POST /api/runs/{id}` | `{ scheme }` | `{ runId, state }` |
@@ -116,6 +153,15 @@ All three require a session (or a preview switch).
 `state` is one of `running` / `needs-colors` / `done` / `failed` — see
 `src/lib/runner/types.ts`. The client polls `GET` every 1.2s while a run is
 `running` and stops as soon as it isn't, so an idle tab makes no requests.
+
+## Hero art
+
+The four heroes in `public/hero/` are the Figma renders, background keyed out so
+they sit on the Mauve ground with no seam. To move to **transparent video**,
+pass `video={{ webm, hevc }}` to `HeroStage` alongside the still — see the UI
+kit README. Two encodes are needed (VP9/AV1-alpha WebM for Chrome/Firefox,
+HEVC-alpha MP4/MOV for Safari); a ProRes `.mov` on its own plays in neither, and
+the still stays the poster and the reduced-motion fallback.
 
 ## Fonts
 

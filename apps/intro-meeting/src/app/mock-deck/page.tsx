@@ -20,7 +20,7 @@ export default async function MockDeckPage({
   const { cohort } = await searchParams
 
   return (
-    <HeroStage image="/hero/failed.png" imageFit="contain" layout="center">
+    <HeroStage image="/hero/login.png">
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
           No Deck Here Yet

@@ -35,6 +35,38 @@ export const COLOR_SCHEMES = [
 
 export type ColorScheme = (typeof COLOR_SCHEMES)[number]
 
+/*
+ * Swatch hexes for the dropdown dots.
+ *
+ * Planna Cotta does NOT carry these: a cohort's `color_scheme` is a bare slug
+ * (`purple_turquoise`) and the only hex Planna has is `market.color` — the
+ * market brand colour, which the skill explicitly says is not the deck colour.
+ * Figma has no variable set with these eight names either; its Brand Colors
+ * collection is five Latent/Signal/Diffuse palettes.
+ *
+ * So each dot is mapped onto the nearest published ELVTR brand value, sourced
+ * below. THIS TABLE IS THE ONLY PLACE TO CORRECT THEM — the dots are cosmetic,
+ * the slug sent to the skill is what actually picks the Gamma template.
+ * TODO confirm all eight with Design Team.
+ */
+const SWATCHES: Record<ColorBase | ColorAccent, string> = {
+  // Bases are the dark half of a pair -> the palettes' Latent values.
+  blue: "#03194A", // Figma variable Brand Colors / Ice Ink / Latent
+  green: "#004A4A", // ui-kit --elvtr-dark-teal (the Green-Lime palette's dark)
+  purple: "#2B0C4A", // Figma variable Brand Colors / Purple Haze / Latent
+  white: "#FFFFFF", // no brand variable — plain white
+  // Accents are the bright half -> the palettes' Signal values.
+  lime: "#C8FF68", // ui-kit --elvtr-lime (Diamond Pine Signal #00FF85 reads green, not lime)
+  turquoise: "#00D5FF", // Figma variable Brand Colors / Ice Ink / Signal
+  pink: "#FF2E93", // Figma variable Brand Colors / Sour Cherry / Signal
+  light_blue: "#EBF9FF", // Figma variable Brand Colors / Ice Ink / Diffuse
+}
+
+/** Hex for a colour dot. Cosmetic only — see the note on SWATCHES. */
+export function colorSwatch(value: ColorBase | ColorAccent): string {
+  return SWATCHES[value]
+}
+
 const LABELS: Record<ColorBase | ColorAccent, string> = {
   blue: "Blue",
   green: "Green",
@@ -60,19 +92,41 @@ export function isColorScheme(value: string): value is ColorScheme {
 
 /** "purple_turquoise" -> "Purple + Turquoise" — how the skill names the pair. */
 export function schemeLabel(scheme: ColorScheme): string {
-  const accent = COLOR_ACCENTS.find((candidate) => scheme.endsWith(`_${candidate}`))!
-  const base = scheme.slice(0, -(accent.length + 1)) as ColorBase
+  const { base, accent } = splitScheme(scheme)
   return `${colorLabel(base)} + ${colorLabel(accent)}`
 }
 
-/** Accents that form a real pair with `base` — everything else has no template. */
-export function accentsFor(base: ColorBase | ""): readonly ColorAccent[] {
-  if (base === "") return COLOR_ACCENTS
-  return COLOR_ACCENTS.filter((accent) => isColorScheme(toScheme(base, accent)))
+/** Splits a scheme slug into its two halves. */
+export function splitScheme(scheme: ColorScheme): { base: ColorBase; accent: ColorAccent } {
+  // Longest accent first, so `light_blue` wins over a shorter suffix match.
+  const accent = [...COLOR_ACCENTS]
+    .sort((a, b) => b.length - a.length)
+    .find((candidate) => scheme.endsWith(`_${candidate}`))!
+  return { base: scheme.slice(0, -(accent.length + 1)) as ColorBase, accent }
 }
 
-/** Bases that form a real pair with `accent`. */
-export function basesFor(accent: ColorAccent | ""): readonly ColorBase[] {
-  if (accent === "") return COLOR_BASES
-  return COLOR_BASES.filter((base) => isColorScheme(toScheme(base, accent)))
+/**
+ * The two dropdowns are derived from the scheme list the server reports, not
+ * from a list hardcoded in the UI — a pair added in Planna shows up on its own.
+ * Each side is filtered by the other, so an impossible pair (Purple + Pink,
+ * White + anything but Light Blue) can never be assembled.
+ */
+export function basesIn(
+  schemes: readonly ColorScheme[],
+  accent: ColorAccent | "" = ""
+): ColorBase[] {
+  const pairs = schemes.map(splitScheme)
+  return COLOR_BASES.filter((base) =>
+    pairs.some((pair) => pair.base === base && (accent === "" || pair.accent === accent))
+  )
+}
+
+export function accentsIn(
+  schemes: readonly ColorScheme[],
+  base: ColorBase | "" = ""
+): ColorAccent[] {
+  const pairs = schemes.map(splitScheme)
+  return COLOR_ACCENTS.filter((accent) =>
+    pairs.some((pair) => pair.accent === accent && (base === "" || pair.base === base))
+  )
 }

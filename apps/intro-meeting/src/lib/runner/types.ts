@@ -51,7 +51,24 @@ export type RunState =
   | { status: "done"; cohort: CohortSummary; result: RunResult }
   | { status: "failed"; error: string }
 
+/** One row of the cohort-code typeahead. */
+export interface CohortSuggestion {
+  cohortCode: string
+  courseTitle: string
+}
+
 export interface IntroMeetingRunner {
+  /**
+   * Cohort codes matching what the user has typed so far. A real runner asks
+   * Planna Cotta (`list_cohorts(q=…)`); returning [] is always acceptable —
+   * a code that is not on the list can still be submitted.
+   */
+  suggestCohorts(query: string): Promise<CohortSuggestion[]>
+  /**
+   * The colour schemes Planna actually uses, in Planna's own slug form. Drives
+   * the two dropdowns, so a scheme added in Planna shows up without a UI change.
+   */
+  listColorSchemes(): Promise<string[]>
   /** Begin a run. Returns its first state. */
   start(request: RunRequest): Promise<{ runId: string; state: RunState }>
   /** Current state of a run, or `null` when the id is unknown. */

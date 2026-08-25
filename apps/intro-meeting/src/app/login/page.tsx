@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import {
+  DisclaimerCard,
   HeroStage,
   HeroStageActions,
   HeroStageCopy,
@@ -11,10 +12,9 @@ import { loginWithGoogle } from "./actions"
 import { LoginButton } from "./login-button"
 
 /*
- * The Figma screens do not include a sign-in step, so this one is built from the
- * same parts: mauve HeroStage, the 3D_icons "welcome-door" component as the hero
- * (a square library icon, hence imageFit="contain"), display heading, lead line,
- * Cola Orange CTA.
+ * Desktop-9 of "Intro Meeting UI" (node 5725:11407): the ceramic-door hero,
+ * "please log in, honey" as a 56px display line (rendered capitalised by the
+ * frame's text-transform), a 30px support line, and the Cola Orange "Log In".
  */
 
 export const metadata: Metadata = {
@@ -49,21 +49,18 @@ export default async function LoginPage({
     : null
 
   return (
-    <HeroStage image="/hero/login.png" imageFit="contain" layout="center">
+    <HeroStage image="/hero/login.png">
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
-          Intro Meetings, On Tap
+          Please log in, honey
         </Heading>
         <Text variant="lead">
-          Sign in with your ELVTR account and build a cohort&rsquo;s intro meeting deck.
+          Intro meeting decks are built from your ELVTR account, so we know whose run it is.
         </Text>
         {error ? (
-          <Text
-            role="alert"
-            className="max-w-[522px] rounded-[12px] bg-elvtr-cream px-[20px] py-[12px] text-elvtr-dark"
-          >
+          <DisclaimerCard className="max-w-[760px]" role="alert">
             {error}
-          </Text>
+          </DisclaimerCard>
         ) : null}
       </HeroStageCopy>
 

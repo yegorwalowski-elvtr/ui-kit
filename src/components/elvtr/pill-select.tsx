@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { svgSources } from "../../assets/icons/svg-sources"
 import { cn } from "../../lib/utils"
+import { fieldBase, fieldFocus, fieldPlaceholder } from "./field"
 
 /*
  * ELVTR PillSelect — the Cream dropdown of the Cola Orange screens (Core
@@ -13,6 +14,9 @@ import { cn } from "../../lib/utils"
  * picker (including on mobile) and full keyboard behaviour for free. The
  * chevron is the exported Figma asset (17.674 x 10.759 leaf inside its own
  * 19.088 x 10.974 canvas — the overhang is designed, keep both boxes).
+ *
+ * When the options are colours, use `SwatchSelect` instead — a native option
+ * list cannot render the swatch dots.
  */
 
 /** Placeholder-first option list: `value=""` renders as the muted label. */
@@ -35,12 +39,10 @@ function PillSelect({
       <select
         value={value}
         className={cn(
-          "h-[56px] w-full appearance-none rounded-[12px] bg-elvtr-cream",
-          "cursor-pointer pl-[32px] pr-[62px]",
-          "font-sans text-[24px] leading-none font-medium tracking-[-0.03em]",
-          isEmpty ? "text-elvtr-dark/50" : "text-elvtr-dark",
-          "outline-none focus-visible:ring-[3px] focus-visible:ring-elvtr-cola-latent/40",
-          "disabled:pointer-events-none disabled:opacity-50"
+          fieldBase,
+          fieldFocus,
+          "cursor-pointer appearance-none pr-[62px]",
+          isEmpty && fieldPlaceholder
         )}
         {...props}
       >

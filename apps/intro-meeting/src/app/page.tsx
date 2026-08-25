@@ -1,19 +1,22 @@
 import { auth } from "@/auth"
+import { signOutAction } from "@/app/actions"
 import { IntroMeetingFlow } from "@/components/intro-meeting-flow"
-import { SessionBar } from "@/components/session-bar"
 import { firstNameFrom } from "@/lib/greeting"
 import { currentUserEmail } from "@/lib/session"
 
 export default async function Page() {
-  // `currentUserEmail` is what the run API attributes a run to, so the bar shows
-  // the same identity — including the placeholder used in preview mode.
+  // `currentUserEmail` is what the run API attributes a run to, so the account
+  // chip shows the same identity — including the preview-mode placeholder.
   const email = await currentUserEmail()
   const session = await auth()
+  const fullName = session?.user?.name ?? null
 
   return (
-    <div className="relative">
-      {email ? <SessionBar email={email} /> : null}
-      <IntroMeetingFlow firstName={firstNameFrom(session?.user?.name, email)} />
-    </div>
+    <IntroMeetingFlow
+      firstName={firstNameFrom(fullName, email)}
+      fullName={fullName}
+      email={email}
+      onSignOut={signOutAction}
+    />
   )
 }

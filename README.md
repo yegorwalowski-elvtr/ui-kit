@@ -83,9 +83,9 @@ Rules baked into the components:
 | Display / headings (`font-display`) | ABC Arizona Flare (Dinamo) | 500 | H1 34px/1.0, ls −1px; hero up to 200px/0.9; tile headers 22px; `display` 56px/1.0, ls −2.24px | Georgia, 'Times New Roman', serif |
 | UI / body (`font-sans`) | Neue Montreal (Pangram Pangram) | 500 | P2 16px/1.2; `lead` 24px/1.2 | Inter, 'Helvetica Neue', Arial, sans-serif |
 
-`Heading level="display"` and `Text variant="lead"` are the Intro Meeting screen
-title and its supporting line. Both clamp down on narrow viewports — the Figma
-values are the desktop ceiling.
+`Heading level="display"` (56px / 1.0, ls −2.24px) and `Text variant="lead"`
+(30px / 1.2) are the Intro Meeting screen title and its supporting line. Both
+clamp down on narrow viewports — the Figma values are the desktop ceiling.
 
 ## Fonts (licensed — action required)
 
@@ -112,11 +112,34 @@ ELVTR brand components in `src/components/elvtr/`:
 | `DetailTile` | Alice Blue rounded-15 tile: icon + Arizona Flare 22px header + Neue Montreal 16px body (the email "Session Details" tiles) |
 | `SectionTabs` / `SectionTabsContent` | Pill tab-row like the Photo Guide deck navigation |
 | `Heading` / `Text` | Type primitives applying the brand scale (`hero`/`h1`–`h4`, `p1`/`p2`/`caption`) |
-| `BrandIcon` | Renders the bundled vuesax **bulk** brand SVGs by name: `text`, `people`, `calendar`, `clock` (recolorable via `color` prop) |
-| `HeroStage` (+ `HeroStageCopy`, `HeroStageActions`) | Full-viewport Cola Orange page shell: mauve ground, a levitating 3D hero object, centred copy and action block. `layout="split"` pins hero top / copy bottom; `layout="center"` groups them |
+| `BrandIcon` | Renders the bundled vuesax **bulk** brand SVGs by name: `text`, `people`, `calendar`, `clock`, `warning` (recolorable via `color` prop) |
+| `HeroStage` (+ `HeroStageCopy`, `HeroStageActions`) | Full-viewport Cola Orange page shell: mauve ground, a levitating hero object, centred copy and action block, and an optional `topBar` slot pinned top-right. Takes a still `image` or transparent `video` (see below) |
+| `AccountChip` | 50px Cream square with the signed-in person's initials (`initialsFrom` builds them) |
 | `ColaButton` | Cola Orange CTA — Signal ink on Latent ground, 12px radius, Arizona Flare 24px |
+| `DisclaimerCard` | Cream notice, 20px radius, `warning` brand icon + one line — for what a run could not resolve and must not guess |
 | `PillInput` | Cream field on mauve — 12px radius, 24px type, placeholder at 50% B&W/Dark |
+| `PillCombobox` | The same field with a suggestion list underneath; the caller supplies the matches. Free text is still allowed |
 | `PillSelect` | The same field as a native `<select>` with the Figma chevron pinned right |
+| `SwatchSelect` | A listbox version of that field whose rows carry a colour dot — a native `<option>` cannot render one |
+
+The Cream field geometry those four share lives in
+[`src/components/elvtr/field.ts`](src/components/elvtr/field.ts); change it
+there, not per component.
+
+### Transparent video heroes
+
+`HeroStage` accepts `video={{ webm, hevc }}` alongside `image`. No single codec
+plays everywhere, so supply both:
+
+| Source | Format | Plays in |
+| --- | --- | --- |
+| `webm` | VP9 or AV1 **with alpha**, `.webm` | Chrome, Edge, Firefox |
+| `hevc` | HEVC **with alpha**, `.mp4`/`.mov` (`hvc1`) | Safari (macOS + iOS) |
+
+`image` stays required — it is the poster, and the fallback when neither source
+plays or the viewer has asked for reduced motion. A ProRes 4444 `.mov` straight
+out of After Effects does **not** play in any browser; export the two web
+formats from it.
 
 Generic product icons: use [`lucide-react`](https://lucide.dev) (shadcn
 default), already a dependency.
@@ -164,7 +187,9 @@ apps like Photo Booth:
    ```
 
 No bundler-specific imports are used, so any bundler works. For Next.js, add
-`transpilePackages: ["@elvtr/ui-kit"]` — the kit ships TypeScript source.
+`transpilePackages: ["@elvtr/ui-kit"]` — the kit ships TypeScript source. The
+components that hold state (`HeroStage`, `PillCombobox`, `SwatchSelect`) declare
+`"use client"`, so React Server Components can import them directly;
 `apps/intro-meeting/next.config.ts` is a working example.
 
 ## Project layout

@@ -65,10 +65,10 @@ const textVariants = cva("font-sans font-medium", {
   variants: {
     variant: {
       /**
-       * 24px / 1.2 — the supporting line under a `display` heading in Core
+       * 30px / 1.2 — the supporting line under a `display` heading in Core
        * Brand Guides 2.0, "Intro Meeting UI" (e.g. node 5709:5246).
        */
-      lead: "text-[clamp(18px,2.2vw,24px)] leading-[1.2]",
+      lead: "text-[clamp(18px,2.4vw,30px)] leading-[1.2]",
       /* Interpolated step (not yet a Figma token) */
       p1: "text-[18px] leading-[1.25]",
       /** Figma P2: 16px / 1.2 — the default body style. */
