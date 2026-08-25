@@ -69,7 +69,12 @@ function PillCombobox({
     suggestions.length === 1 &&
     suggestions[0].value.trim().toUpperCase() === value.trim().toUpperCase()
   const hasList = suggestions.length > 0 && !settled
-  const showPopover = open && !settled && (hasList || loading || Boolean(emptyMessage))
+  // An untouched field has nothing to report. Without this the popover opens on
+  // focus and says "no match" about a query nobody has typed yet — sitting on
+  // top of the CTA while it does.
+  const queried = value.trim().length > 0
+  const showPopover =
+    open && queried && !settled && (hasList || loading || Boolean(emptyMessage))
 
   // A fresh result set invalidates the highlight.
   React.useEffect(() => setActiveIndex(-1), [suggestions])
