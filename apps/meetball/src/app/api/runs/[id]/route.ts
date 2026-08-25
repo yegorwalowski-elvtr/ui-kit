@@ -4,6 +4,10 @@ import { currentUserEmail } from "@/lib/session"
 
 type Params = { params: Promise<{ id: string }> }
 
+function messageOf(error: unknown): string {
+  return error instanceof Error ? error.message : "unknown error"
+}
+
 /** Current state of a run. */
 export async function GET(_request: Request, { params }: Params) {
   if (!(await currentUserEmail())) {
@@ -11,10 +15,13 @@ export async function GET(_request: Request, { params }: Params) {
   }
 
   const { id } = await params
-  const state = await runner.poll(id)
-  if (!state) return Response.json({ error: "Unknown run." }, { status: 404 })
-
-  return Response.json({ runId: id, state })
+  try {
+    const state = await runner.poll(id)
+    if (!state) return Response.json({ error: "Unknown run." }, { status: 404 })
+    return Response.json({ runId: id, state })
+  } catch (error) {
+    return Response.json({ error: messageOf(error) }, { status: 502 })
+  }
 }
 
 /** Answers the colour-pair question and lets the run continue. */
@@ -40,8 +47,14 @@ export async function POST(request: Request, { params }: Params) {
     )
   }
 
-  const state = await runner.submitColors(id, scheme)
-  if (!state) return Response.json({ error: "Unknown run." }, { status: 404 })
-
-  return Response.json({ runId: id, state })
+  try {
+    const state = await runner.submitColors(id, scheme)
+    if (!state) return Response.json({ error: "Unknown run." }, { status: 404 })
+    return Response.json({ runId: id, state })
+  } catch (error) {
+    return Response.json(
+      { error: `Could not send the colour pair: ${messageOf(error)}` },
+      { status: 502 },
+    )
+  }
 }

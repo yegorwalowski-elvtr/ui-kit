@@ -42,40 +42,69 @@ export interface AnthropicAgentConfig {
  * agent — model, system prompt, tools, MCP servers and skills all live on the
  * agent object, never here.
  */
+/*
+ * Turns an SDK error into one readable sentence. The raw message carries the
+ * whole JSON body, which ends up in front of the operator on the failure
+ * screen — "401 API key is invalid." is what they can act on, a serialized
+ * error envelope is not.
+ */
+function readable(error: unknown): Error {
+  if (error instanceof Anthropic.APIError) {
+    const body = error.error as { error?: { message?: string } } | undefined
+    const detail = body?.error?.message ?? error.message
+    return new Error(`${error.status ?? "request failed"} ${detail}`)
+  }
+  return error instanceof Error ? error : new Error(String(error))
+}
+
+async function translating<T>(work: () => Promise<T>): Promise<T> {
+  try {
+    return await work()
+  } catch (error) {
+    throw readable(error)
+  }
+}
+
 export function anthropicTransport(config: AnthropicAgentConfig): AgentTransport {
   const client = new Anthropic(config.apiKey ? { apiKey: config.apiKey } : {})
 
   return {
     async createSession({ title }) {
-      const session = await client.beta.sessions.create({
+      const session = await translating(() =>
+        client.beta.sessions.create({
         agent: config.agentId,
         environment_id: config.environmentId,
         ...(config.vaultIds.length > 0 ? { vault_ids: config.vaultIds } : null),
-        title,
-      })
+          title,
+        }),
+      )
       return { id: session.id }
     },
 
     async sendUserMessage(sessionId, text) {
-      await client.beta.sessions.events.send(sessionId, {
-        events: [{ type: "user.message", content: [{ type: "text", text }] }],
-      })
+      await translating(() =>
+        client.beta.sessions.events.send(sessionId, {
+          events: [{ type: "user.message", content: [{ type: "text", text }] }],
+        }),
+      )
     },
 
     async sendCustomToolResult(sessionId, toolUseId, text) {
-      await client.beta.sessions.events.send(sessionId, {
-        events: [
-          {
-            type: "user.custom_tool_result",
-            custom_tool_use_id: toolUseId,
-            content: [{ type: "text", text }],
-          },
-        ],
-      })
+      await translating(() =>
+        client.beta.sessions.events.send(sessionId, {
+          events: [
+            {
+              type: "user.custom_tool_result",
+              custom_tool_use_id: toolUseId,
+              content: [{ type: "text", text }],
+            },
+          ],
+        }),
+      )
     },
 
     async *streamEvents(sessionId) {
-      const stream = await client.beta.sessions.events.stream(sessionId)
+      const stream = await translating(() => client.beta.sessions.events.stream(sessionId))
       for await (const event of stream) {
         yield event as unknown as SessionEvent
       }
