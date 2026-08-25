@@ -5,7 +5,8 @@ import { cn } from "../../lib/utils"
 /*
  * ELVTR AccountChip — the signed-in marker at the top right of the Cola Orange
  * screens (Core Brand Guides 2.0, "Intro Meeting UI", node 5722:11404): a 50px
- * Cream square with the person's initials in Neue Montreal at 50% B&W/Dark.
+ * Cream square (14.5px radius, 14.5px padding around 17.4px type) with the
+ * person's initials in Neue Montreal at 50% B&W/Dark.
  *
  * Renders a <button> when given an `onClick` (so it can open an account menu)
  * and a plain <span> otherwise.
@@ -37,8 +38,8 @@ function AccountChip({ initials, className, ...props }: AccountChipProps) {
       type="button"
       data-slot="account-chip"
       className={cn(
-        "flex size-[50px] shrink-0 items-center justify-center rounded-[14px] bg-elvtr-cream",
-        "font-sans text-[18px] leading-none font-medium text-elvtr-dark/50 uppercase",
+        "flex size-[50px] shrink-0 items-center justify-center rounded-[14.5px] bg-elvtr-cream",
+        "font-sans text-[17.4px] leading-[1.2] font-medium text-elvtr-dark/50 uppercase",
         "cursor-pointer transition-colors outline-none hover:text-elvtr-dark",
         "focus-visible:ring-[3px] focus-visible:ring-elvtr-cola-latent/40",
         className

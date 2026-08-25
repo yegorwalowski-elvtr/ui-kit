@@ -26,7 +26,7 @@ function ColaButton({ className, asChild = false, ...props }: ColaButtonProps) {
     <Comp
       data-slot="cola-button"
       className={cn(
-        "inline-flex h-[56px] w-fit shrink-0 cursor-pointer items-center justify-center gap-2",
+        "inline-flex h-[56px] w-fit shrink-0 cursor-pointer items-center justify-center gap-[10px]",
         "rounded-[12px] bg-elvtr-cola-latent px-[32px]",
         "font-display text-[25px] leading-none font-medium tracking-[-0.03em] whitespace-nowrap text-elvtr-cola-signal",
         "transition-opacity outline-none hover:opacity-90",

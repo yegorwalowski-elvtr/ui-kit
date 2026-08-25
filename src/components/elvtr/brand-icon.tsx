@@ -4,8 +4,8 @@ import { cn } from "../../lib/utils"
 
 // vuesax "bulk" brand icons exported from the ELVTR Figma files.
 // The SVG sources use `fill="var(--fill-0, …)"`, so each renders in its own
-// Figma default (Dark Teal, or Cola Orange Latent for `danger`) and can be
-// recolored via the `color` prop.
+// Figma default (Dark Teal; Cola Orange Latent for `danger`, Signal for
+// `google`) and can be recolored via the `color` prop.
 //
 // Sources come from the generated `svg-sources` module rather than Vite's
 // `?raw` import, so the kit stays consumable from any bundler.
@@ -17,6 +17,7 @@ const BRAND_ICONS = {
   people: svgSources["vuesax-bulk/people"],
   text: svgSources["vuesax-bulk/text"],
   danger: svgSources["vuesax-bulk/danger"],
+  google: svgSources["vuesax-bulk/google"],
 } as const
 
 export type BrandIconName = keyof typeof BRAND_ICONS

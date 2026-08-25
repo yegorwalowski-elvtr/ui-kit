@@ -411,7 +411,7 @@ export function IntroMeetingFlow({
           </Heading>
           <Text variant="lead">Your intro meeting is ready to go, honey.</Text>
           {phase.flags.length > 0 ? (
-            <div className="flex w-full flex-col items-center gap-[12px]">
+            <div className="flex w-full flex-col items-center gap-[20px]">
               {phase.flags.map((flag) => (
                 <DisclaimerCard key={flag}>
                   {flag}
