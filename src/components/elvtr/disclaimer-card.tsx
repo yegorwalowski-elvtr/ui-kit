@@ -14,7 +14,7 @@ import { BrandIcon } from "./brand-icon"
  */
 
 export interface DisclaimerCardProps extends React.ComponentProps<"div"> {
-  /** Defaults to the `warning` brand icon. Pass a node to override. */
+  /** Defaults to the `danger` brand icon. Pass a node to override. */
   icon?: React.ReactNode
 }
 
@@ -24,12 +24,12 @@ function DisclaimerCard({ icon, className, children, ...props }: DisclaimerCardP
       data-slot="disclaimer-card"
       className={cn(
         "flex items-center gap-[25px] rounded-[20px] bg-elvtr-cream px-[30px] py-[20px]",
-        "text-left font-sans text-[20px] leading-[1.2] font-medium tracking-[-0.02em] text-elvtr-dark",
+        "w-full text-left font-sans text-[25px] leading-[1.2] font-medium tracking-[-0.02em] text-elvtr-dark",
         className
       )}
       {...props}
     >
-      <span className="shrink-0">{icon ?? <BrandIcon name="warning" size={50} />}</span>
+      <span className="shrink-0">{icon ?? <BrandIcon name="danger" size={50} />}</span>
       <span>{children}</span>
     </div>
   )

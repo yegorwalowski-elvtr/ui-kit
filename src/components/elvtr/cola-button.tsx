@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils"
 /*
  * ELVTR ColaButton — the primary action button of the Cola Orange screens
  * (Core Brand Guides 2.0, "Intro Meeting UI", node 5712:6530): Cola Orange
- * Latent ground, Cola Orange Signal ink, 12px radius, ABC Arizona Flare 24px,
+ * Latent ground, Cola Orange Signal ink, 12px radius, ABC Arizona Flare 25px,
  * 32/16 padding.
  *
  * Brand rule: Signal ink belongs on Latent ground. Never put Signal text
@@ -28,7 +28,7 @@ function ColaButton({ className, asChild = false, ...props }: ColaButtonProps) {
       className={cn(
         "inline-flex h-[56px] w-fit shrink-0 cursor-pointer items-center justify-center gap-2",
         "rounded-[12px] bg-elvtr-cola-latent px-[32px]",
-        "font-display text-[24px] leading-none font-medium tracking-[-0.03em] whitespace-nowrap text-elvtr-cola-signal",
+        "font-display text-[25px] leading-none font-medium tracking-[-0.03em] whitespace-nowrap text-elvtr-cola-signal",
         "transition-opacity outline-none hover:opacity-90",
         "focus-visible:ring-[3px] focus-visible:ring-elvtr-cola-latent/40",
         "disabled:pointer-events-none disabled:opacity-50",

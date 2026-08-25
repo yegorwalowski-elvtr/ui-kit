@@ -362,7 +362,7 @@ export function IntroMeetingFlow({
           <form
             id="colors-form"
             onSubmit={submitColors}
-            className="flex w-full max-w-[522px] flex-wrap items-center justify-center gap-[12px]"
+            className="flex w-full max-w-[540px] flex-wrap items-center justify-center gap-[20px]"
           >
             <SwatchSelect
               id="primary-color"
@@ -409,11 +409,11 @@ export function IntroMeetingFlow({
           <Heading level="display" className="text-elvtr-dark capitalize">
             Ta-da!
           </Heading>
-          <Text variant="lead">Your intro meeting is ready to go, honey</Text>
+          <Text variant="lead">Your intro meeting is ready to go, honey.</Text>
           {phase.flags.length > 0 ? (
-            <div className="flex flex-col items-center gap-[12px]">
+            <div className="flex w-full flex-col items-center gap-[12px]">
               {phase.flags.map((flag) => (
-                <DisclaimerCard key={flag} className="max-w-[760px]">
+                <DisclaimerCard key={flag}>
                   {flag}
                 </DisclaimerCard>
               ))}
@@ -430,7 +430,7 @@ export function IntroMeetingFlow({
           <button
             type="button"
             onClick={reset}
-            className="cursor-pointer font-sans text-[24px] leading-[1.2] font-medium text-elvtr-dark/50 underline decoration-solid underline-offset-2 outline-none hover:text-elvtr-dark/70 focus-visible:ring-[3px] focus-visible:ring-elvtr-cola-latent/40"
+            className="cursor-pointer font-sans text-[25px] leading-[1.2] font-medium text-elvtr-dark/50 underline decoration-solid underline-offset-2 outline-none hover:text-elvtr-dark/70 focus-visible:ring-[3px] focus-visible:ring-elvtr-cola-latent/40"
           >
             Create Another
           </button>
@@ -445,7 +445,7 @@ export function IntroMeetingFlow({
         <Heading level="display" className="text-elvtr-dark capitalize">
           That Didn&rsquo;t Work
         </Heading>
-        <DisclaimerCard className="max-w-[760px]" role="alert">
+        <DisclaimerCard role="alert">
           {phase.error}
         </DisclaimerCard>
       </HeroStageCopy>

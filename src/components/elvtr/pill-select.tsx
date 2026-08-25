@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { svgSources } from "../../assets/icons/svg-sources"
 import { cn } from "../../lib/utils"
+import { FieldChevron } from "./chevron"
 import { fieldBase, fieldFocus, fieldPlaceholder } from "./field"
 
 /*
@@ -12,8 +12,8 @@ import { fieldBase, fieldFocus, fieldPlaceholder } from "./field"
  *
  * A native `<select>` on purpose: it is one control, it gets the platform
  * picker (including on mobile) and full keyboard behaviour for free. The
- * chevron is the exported Figma asset (17.674 x 10.759 leaf inside its own
- * 19.088 x 10.974 canvas — the overhang is designed, keep both boxes).
+ * chevron is the exported Figma asset (18.923 x 10.866), shared with
+ * `SwatchSelect` via `FieldChevron`.
  *
  * When the options are colours, use `SwatchSelect` instead — a native option
  * list cannot render the swatch dots.
@@ -35,7 +35,7 @@ function PillSelect({
 }: PillSelectProps) {
   const isEmpty = value === "" || value == null
   return (
-    <div data-slot="pill-select" className={cn("relative w-full max-w-[255px]", className)}>
+    <div data-slot="pill-select" className={cn("relative w-full max-w-[260px]", className)}>
       <select
         value={value}
         className={cn(
@@ -55,16 +55,7 @@ function PillSelect({
           </option>
         ))}
       </select>
-      {/* Figma leaf box; the asset overhangs it by design (inset -1% / -8%). */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute top-1/2 right-[32px] h-[10.759px] w-[17.674px] -translate-y-1/2"
-      >
-        <span
-          className="absolute -top-[1%] -right-[8%] -bottom-[1%] left-0 [&>svg]:block [&>svg]:size-full"
-          dangerouslySetInnerHTML={{ __html: svgSources["ui/chevron-down"] }}
-        />
-      </span>
+      <FieldChevron className="pointer-events-none absolute top-1/2 right-[32px] -translate-y-1/2" />
     </div>
   )
 }

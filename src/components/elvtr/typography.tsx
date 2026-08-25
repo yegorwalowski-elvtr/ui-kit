@@ -20,11 +20,11 @@ const headingVariants = cva("font-display font-medium text-primary", {
       /** Oversized hero display — up to 200px, 0.9 leading (Figma hero). */
       hero: "text-[clamp(56px,10vw,200px)] leading-[0.9] tracking-[-0.02em] text-balance",
       /**
-       * Screen title — 56px / 1.0, tracking -2.24px. From Core Brand Guides
+       * Screen title — 60px / 1.0, tracking -2.4px. From Core Brand Guides
        * 2.0, "Intro Meeting UI" (e.g. node 5709:5245). Steps down on narrow
        * viewports; the Figma value is the ceiling.
        */
-      display: "text-[clamp(34px,5vw,56px)] leading-none tracking-[-0.04em] text-balance",
+      display: "text-[clamp(34px,5.2vw,60px)] leading-none tracking-[-0.04em] text-balance",
       /** Figma H1: 34px / 1.0, letter-spacing -1px. */
       h1: "text-[34px] leading-none tracking-[-1px]",
       /* Interpolated step (not yet a Figma token) */

@@ -4,9 +4,9 @@
 // Component consumers (Next.js). Inert for bundlers that do not use RSC.
 import * as React from "react"
 
-import { svgSources } from "../../assets/icons/svg-sources"
 import { cn } from "../../lib/utils"
 import { useDismiss } from "../../lib/use-dismiss"
+import { FieldChevron } from "./chevron"
 import {
   fieldBase,
   fieldFocus,
@@ -140,7 +140,7 @@ function SwatchSelect({
   }
 
   return (
-    <div ref={root} className={cn("relative w-full max-w-[255px]", className)}>
+    <div ref={root} className={cn("relative w-full max-w-[260px]", className)}>
       <button
         id={id}
         type="button"
@@ -155,22 +155,15 @@ function SwatchSelect({
         className={cn(
           fieldBase,
           fieldFocus,
-          "flex cursor-pointer items-center gap-[14px] pr-[62px] text-left",
+          "flex cursor-pointer items-center justify-between gap-[14px] text-left",
           !selected && fieldPlaceholder
         )}
       >
-        {selected ? <Dot color={selected.color} /> : null}
-        <span className="truncate">{selected?.label ?? placeholder}</span>
-        <span
-          aria-hidden
-          className="pointer-events-none absolute top-1/2 right-[32px] h-[10.759px] w-[17.674px] -translate-y-1/2"
-        >
-          {/* Figma leaf box; the exported asset overhangs it by design. */}
-          <span
-            className="absolute -top-[1%] -right-[8%] -bottom-[1%] left-0 [&>svg]:block [&>svg]:size-full"
-            dangerouslySetInnerHTML={{ __html: svgSources["ui/chevron-down"] }}
-          />
+        <span className="flex min-w-0 items-center gap-[14px]">
+          {selected ? <Dot color={selected.color} /> : null}
+          <span className="truncate">{selected?.label ?? placeholder}</span>
         </span>
+        <FieldChevron />
       </button>
 
       {open ? (

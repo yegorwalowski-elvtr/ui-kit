@@ -43,6 +43,7 @@ export {
   type AccountChipProps,
 } from "./components/elvtr/account-chip"
 export { Chip, chipVariants, type ChipProps } from "./components/elvtr/chip"
+export { FieldChevron } from "./components/elvtr/chevron"
 export { ColaButton, type ColaButtonProps } from "./components/elvtr/cola-button"
 export { CtaButton, type CtaButtonProps } from "./components/elvtr/cta-button"
 export { DetailTile, type DetailTileProps } from "./components/elvtr/detail-tile"

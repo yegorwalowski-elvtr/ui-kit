@@ -64,7 +64,7 @@ export default async function LoginPage({
           to start.
         </Text>
         {error ? (
-          <DisclaimerCard className="max-w-[760px]" role="alert">
+          <DisclaimerCard role="alert">
             {error}
           </DisclaimerCard>
         ) : null}
