@@ -238,10 +238,16 @@ type will not match Figma.
 
 ## Deploy
 
-`railway.json` mirrors Photo Booth's: RAILPACK build, `npm run start`,
-healthcheck `/api/health`. Build and start commands run through the workspace so
-the UI kit is linked. Set `AUTH_SECRET`, `AUTH_URL`, `AUTH_GOOGLE_ID`,
-`AUTH_GOOGLE_SECRET`.
+`railway.json` lives at the **repo root**, not here, and that placement is
+load-bearing: this app is an npm workspace whose UI-kit dependency resolves to
+`../..`, so install, build and start all have to run from the root. Point the
+Railway service at the repository root (the default) and leave it alone.
+
+It mirrors Photo Booth's otherwise: RAILPACK, `npm run build:intro` /
+`npm run start:intro`, healthcheck `/api/health`. Set `AUTH_SECRET`, `AUTH_URL`,
+`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and add
+`<AUTH_URL>/api/auth/callback/google` to the Google OAuth client's authorized
+redirect URIs.
 
 > The mock runner keeps run state in memory, which is fine for one instance and
 > wrong for several. A real runner needs its own store.

@@ -24,7 +24,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "dev:intro": "npm run dev --workspace @elvtr/intro-meeting",
-    "build:intro": "npm run build --workspace @elvtr/intro-meeting"
+    "build:intro": "npm run build --workspace @elvtr/intro-meeting",
+    "start:intro": "npm run start --workspace @elvtr/intro-meeting"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
