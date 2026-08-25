@@ -1,20 +1,42 @@
+import { agentRunner } from "./agent"
+import { anthropicTransport } from "./agent-transport"
 import { mockRunner } from "./mock"
 import type { IntroMeetingRunner } from "./types"
 
 /*
- * Swap point for the real thing.
+ * Which runner serves a request.
  *
- * The mock is the only implementation today. To go live, add a module that
- * satisfies `IntroMeetingRunner` (see ./types.ts) — it has to suggest cohorts
- * and colour schemes out of Planna Cotta, run the
- * `creative-gamma-intro-meetings` skill with the cohort code, relay the
- * colour-pair question when Planna has no `color_scheme`, and return the Gamma
- * URL plus the skill's flags — then select it here.
+ * The agent runner needs a provisioned Managed Agent — run
+ * `node scripts/setup-agent.mjs` once and put the three ids it prints into the
+ * environment. Until all three are set, the mock serves, so a deploy without
+ * them is a working demo rather than a broken tool.
  *
- * Keep the selection server-side: a real runner holds Planna / Figma / Gamma
- * credentials and must never be reachable from the browser.
+ * Server-side only. A real run holds the Anthropic key and the Planna / Figma /
+ * Gamma credentials; none of that may be reachable from the browser.
  */
-export const runner: IntroMeetingRunner = mockRunner
+
+function configuredAgentRunner(): IntroMeetingRunner | null {
+  const agentId = process.env.MEETBALL_AGENT_ID
+  const environmentId = process.env.MEETBALL_ENVIRONMENT_ID
+  if (!agentId || !environmentId) return null
+
+  return agentRunner(
+    anthropicTransport({
+      agentId,
+      environmentId,
+      // Comma-separated so several vaults can be attached without a code change.
+      vaultIds: (process.env.MEETBALL_VAULT_IDS ?? "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean),
+    }),
+  )
+}
+
+export const runner: IntroMeetingRunner = configuredAgentRunner() ?? mockRunner
+
+/** True when real decks are being built — used by the API to label a run. */
+export const runnerIsLive = runner !== mockRunner
 
 export type {
   CohortSuggestion,

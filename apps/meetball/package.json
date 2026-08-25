@@ -7,9 +7,12 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:runner": "tsx scripts/test-agent-runner.ts",
+    "setup:agent": "tsx scripts/setup-agent.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
     "@elvtr/ui-kit": "file:../..",
     "next": "^16.3.2",
     "next-auth": "^5.0.0-beta.32",
@@ -22,6 +25,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "tailwindcss": "^4.1.11",
+    "tsx": "^4.23.12",
     "typescript": "~5.8.3"
   }
 }

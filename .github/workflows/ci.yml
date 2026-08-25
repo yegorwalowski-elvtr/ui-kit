@@ -39,5 +39,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck --workspace @elvtr/meetball
+      # Drives the Managed Agents runner through every path with a scripted
+      # fake transport — no API key, no live session, no cost.
+      - run: npm run test:runner --workspace @elvtr/meetball
       # Exactly what Railway runs, from the repo root.
       - run: npm run build:meetball
