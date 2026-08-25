@@ -55,7 +55,8 @@ export default async function LoginPage({
           Welcome to Meetball
         </Heading>
         <Text variant="lead">
-          Type a cohort, get its intro meeting deck. Sign in with your ELVTR account to start.
+          Type a cohort, get its intro meeting deck. Sign in with your ELVTR Google
+          account to start.
         </Text>
         {error ? (
           <DisclaimerCard className="max-w-[760px]" role="alert">
@@ -69,7 +70,9 @@ export default async function LoginPage({
           <input type="hidden" name="callbackUrl" value={callbackUrl} />
           <LoginButton />
         </form>
-        <Text className="text-elvtr-dark/50">Verified @elvtr.com accounts only.</Text>
+        <Text className="text-elvtr-dark/50">
+          Google sign-in · verified @elvtr.com accounts only.
+        </Text>
       </HeroStageActions>
     </HeroStage>
   )
