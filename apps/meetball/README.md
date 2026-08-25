@@ -59,8 +59,12 @@ Two escape hatches, both off by default:
 
 | Variable | Effect |
 | --- | --- |
-| `MEETBALL_LOCAL_PREVIEW=1` | Skips auth **on localhost only**; other hosts get a 403 |
-| `MEETBALL_PUBLIC_PREVIEW=1` | Skips auth on every host — staging review before OAuth exists. Remove it as soon as `AUTH_GOOGLE_*` are set |
+| `MEETBALL_LOCAL_PREVIEW=1` | Skips auth in a **development build only** (`npm run dev`). Inert under `npm run start`, so setting it on a deployed host does nothing |
+| `MEETBALL_PUBLIC_PREVIEW=1` | Skips auth **on every host, deployed ones included** — staging review before OAuth exists. Remove it the moment `AUTH_GOOGLE_*` are set |
+
+`MEETBALL_LOCAL_PREVIEW` is gated on the build rather than on the request's
+hostname, and that matters: a hostname comes from the caller's own `Host` header,
+so it cannot carry a trust decision. `NODE_ENV` can't be set by a request.
 
 In either preview mode a run is attributed to `preview@elvtr.com`.
 

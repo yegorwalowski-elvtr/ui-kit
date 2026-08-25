@@ -5,7 +5,9 @@ import { signIn } from "@/auth"
 /** Only same-origin paths — never bounce a signed-in user to another host. */
 function safeCallbackUrl(value: FormDataEntryValue | null) {
   if (typeof value !== "string") return "/"
-  if (!value.startsWith("/") || value.startsWith("//")) return "/"
+  // "/\\evil.com" survives a startsWith("/") test and some browsers normalise
+  // it to "//evil.com" — a protocol-relative jump off-site.
+  if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return "/"
   return value
 }
 

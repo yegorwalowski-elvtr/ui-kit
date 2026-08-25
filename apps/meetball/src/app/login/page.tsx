@@ -35,7 +35,9 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 function safeCallbackUrl(value: string | string[] | undefined) {
   if (typeof value !== "string") return "/"
-  if (!value.startsWith("/") || value.startsWith("//")) return "/"
+  // "/\\evil.com" survives a startsWith("/") test and some browsers normalise
+  // it to "//evil.com" — a protocol-relative jump off-site.
+  if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return "/"
   return value
 }
 
