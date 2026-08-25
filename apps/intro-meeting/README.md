@@ -183,31 +183,51 @@ in is the whole change**: no code edit, no rebuild.
 The stills are the Figma renders with the background keyed out so they sit on
 the Mauve ground with no seam.
 
-### Replacing a still with transparent video
+### Replacing a still with motion
 
-Add either or both alongside the `.png` — it stays as the poster, the
-first-paint image, and the fallback:
+Drop a file next to the `.png` — it stays as the first paint and the fallback.
+Three formats are recognised, in this priority order:
 
-| Extension | Codec | Plays in |
+| Extension | What it is | Animates in |
 | --- | --- | --- |
-| `<name>.webm` | VP9 or AV1 **with alpha** | Chrome, Edge, Firefox |
-| `<name>.mp4` or `<name>.mov` | HEVC **with alpha** (`hvc1`) | Safari (macOS + iOS) |
+| `<name>.webp` | Animated WebP with alpha, rendered as `<img>` | **Every current browser, Safari included** |
+| `<name>.webm` | VP9/AV1 with alpha, rendered as `<video>` | Chrome, Edge, Firefox |
+| `<name>.mp4` / `.mov` | HEVC with alpha, rendered as `<video>` | Safari only |
 
-Two encodes are needed because no single codec covers every browser. A ProRes
-4444 `.mov` straight out of After Effects plays in **neither** — it is the
-master to encode from, not a web format.
+**Animated WebP is the recommended one**, and the priority order exists because
+of a trap: Safari happily *plays* a VP9 WebM and paints the transparent area
+**black**. Given both a `.webp` and a `.webm`, the `.webp` wins so that can
+never happen.
 
-- The **WebM** can be produced from that master with ffmpeg:
-  `ffmpeg -i master.mov -c:v libvpx-vp9 -pix_fmt yuva420p -auto-alt-ref 0 -b:v 2M name.webm`
-  (`-pix_fmt yuva420p` is what keeps the alpha; `-auto-alt-ref 0` is required
-  with it.)
-- The **HEVC-with-alpha** version has to come off a Mac — After Effects, Motion
-  or Compressor. `libx265` cannot write an alpha layer, so ffmpeg is no help
-  here. Without it Safari simply shows the still, which is a correct-looking
-  fallback rather than a broken one.
+HEVC-with-alpha is the only transparent video Safari renders correctly, and only
+Apple tooling writes it (After Effects/Motion/Compressor on macOS) — `libx265`
+cannot encode an alpha layer. So on Windows, animated WebP is the way to get
+motion everywhere.
 
-Whatever is missing degrades to the `.png`, and a viewer with "reduce motion"
-set always gets the still.
+#### From an After Effects export
+
+Export from AE with alpha — **PNG Sequence** (lossless, simplest) or
+**QuickTime → Animation / ProRes 4444**, with Channels set to *RGB + Alpha*.
+Then:
+
+```bash
+# from a PNG sequence
+ffmpeg -framerate 24 -i frame_%04d.png \
+  -c:v libwebp_anim -pix_fmt yuva420p -lossless 0 -q:v 75 -loop 0 name.webp
+
+# from a QuickTime master that carries alpha
+ffmpeg -i master.mov \
+  -c:v libwebp_anim -pix_fmt yuva420p -lossless 0 -q:v 75 -loop 0 name.webp
+
+# optional, for hardware-decoded playback in Chrome/Firefox
+ffmpeg -i master.mov -c:v libvpx-vp9 -pix_fmt yuva420p -auto-alt-ref 0 -b:v 2M name.webm
+```
+
+Keep the loop short (2–3s) and the frame around 1466x800 — twice the 733x400 box
+the frame places the hero in. `-q:v` trades size for quality; 70–80 is a good
+band for these ceramic renders.
+
+A viewer with "reduce motion" set always gets the `.png`, whichever files exist.
 
 ## Fonts
 

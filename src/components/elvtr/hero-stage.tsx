@@ -40,13 +40,15 @@ function usePrefersReducedMotion() {
 
 export interface HeroVideoSources {
   /**
-   * VP9- or AV1-with-alpha WebM. The only transparent-video format Chrome,
-   * Edge and Firefox play.
+   * VP9- or AV1-with-alpha WebM. Transparency works in Chrome, Edge and
+   * Firefox. Safari will happily PLAY this file and render the transparent
+   * area BLACK — which is why `animated` takes priority over `video`.
    */
   webm?: string
   /**
    * HEVC-with-alpha in an .mp4 or .mov container — Safari only, and the only
-   * thing Safari accepts for transparency.
+   * transparent video Safari renders correctly. Produced by Apple tooling
+   * (After Effects/Motion/Compressor on a Mac); libx265 cannot write alpha.
    */
   hevc?: string
 }
@@ -63,8 +65,20 @@ export interface HeroStageProps extends React.ComponentProps<"main"> {
    * for full coverage: no single codec plays everywhere (see HeroVideoSources).
    * The poster shows while it loads, if no source is playable, or when the
    * viewer asked for reduced motion.
+   *
+   * Ignored when `animated` is set.
    */
   video?: HeroVideoSources
+  /**
+   * An animated image with alpha — animated WebP (or APNG) — rendered as
+   * `<img>`. Every current browser animates it with transparency intact,
+   * including Safari, so this is the one-file way to move a transparent hero
+   * without an Apple-only HEVC encode.
+   *
+   * Takes priority over `video`: given both, Safari would pick the WebM and
+   * paint the transparency black.
+   */
+  animated?: string
   /**
    * Empty by default: the hero is decorative and the heading carries the
    * meaning. Pass a string only when the object itself is information.
@@ -84,6 +98,7 @@ export interface HeroStageProps extends React.ComponentProps<"main"> {
 function HeroStage({
   image,
   video,
+  animated,
   imageAlt = "",
   imageFit = "cover",
   topBar,
@@ -92,7 +107,8 @@ function HeroStage({
   ...props
 }: HeroStageProps) {
   const reducedMotion = usePrefersReducedMotion()
-  const playVideo = Boolean(video?.webm || video?.hevc) && !reducedMotion
+  const playAnimation = Boolean(animated) && !reducedMotion
+  const playVideo = !playAnimation && Boolean(video?.webm || video?.hevc) && !reducedMotion
   const fitClass =
     imageFit === "cover" ? "object-contain md:object-cover" : "object-contain"
 
@@ -117,7 +133,14 @@ function HeroStage({
           data-slot="hero-stage-image"
           className="relative h-[clamp(160px,32vh,400px)] w-full max-w-[733px] shrink-0"
         >
-          {playVideo ? (
+          {playAnimation ? (
+            <img
+              src={animated}
+              alt={imageAlt}
+              aria-hidden={imageAlt === "" ? true : undefined}
+              className={cn("pointer-events-none size-full select-none", fitClass)}
+            />
+          ) : playVideo ? (
             <video
               key={`${video?.webm ?? ""}|${video?.hevc ?? ""}`}
               poster={image}
