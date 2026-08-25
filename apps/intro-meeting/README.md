@@ -168,15 +168,46 @@ All three require a session (or a preview switch).
 
 ## Hero art
 
-The heroes in `public/hero/` are the Figma renders, background keyed out so they
-sit on the Mauve ground with no seam: `login.png` (the Meetball cat) on the
-welcome screen, `greeting.png` on the prompt, `colors.png` on the colour
-question, `done.png` on Ta-da, and `door.png` — the old welcome art — on the
-failure and mock-deck screens. To move to **transparent video**,
-pass `video={{ webm, hevc }}` to `HeroStage` alongside the still — see the UI
-kit README. Two encodes are needed (VP9/AV1-alpha WebM for Chrome/Firefox,
-HEVC-alpha MP4/MOV for Safari); a ProRes `.mov` on its own plays in neither, and
-the still stays the poster and the reduced-motion fallback.
+`public/hero/` is the only place these live, and the filename is the wiring —
+`src/lib/hero-media.ts` reads the folder on each request, so **dropping a file
+in is the whole change**: no code edit, no rebuild.
+
+| File | Screen |
+| --- | --- |
+| `login.*` | Welcome / sign-in (the Meetball cat) |
+| `greeting.*` | Cohort prompt, and the in-progress state |
+| `colors.*` | "Oops, No Colors Yet!" |
+| `done.*` | Ta-da |
+| `door.*` | Failure, and `/mock-deck` |
+
+The stills are the Figma renders with the background keyed out so they sit on
+the Mauve ground with no seam.
+
+### Replacing a still with transparent video
+
+Add either or both alongside the `.png` — it stays as the poster, the
+first-paint image, and the fallback:
+
+| Extension | Codec | Plays in |
+| --- | --- | --- |
+| `<name>.webm` | VP9 or AV1 **with alpha** | Chrome, Edge, Firefox |
+| `<name>.mp4` or `<name>.mov` | HEVC **with alpha** (`hvc1`) | Safari (macOS + iOS) |
+
+Two encodes are needed because no single codec covers every browser. A ProRes
+4444 `.mov` straight out of After Effects plays in **neither** — it is the
+master to encode from, not a web format.
+
+- The **WebM** can be produced from that master with ffmpeg:
+  `ffmpeg -i master.mov -c:v libvpx-vp9 -pix_fmt yuva420p -auto-alt-ref 0 -b:v 2M name.webm`
+  (`-pix_fmt yuva420p` is what keeps the alpha; `-auto-alt-ref 0` is required
+  with it.)
+- The **HEVC-with-alpha** version has to come off a Mac — After Effects, Motion
+  or Compressor. `libx265` cannot write an alpha layer, so ffmpeg is no help
+  here. Without it Safari simply shows the still, which is a correct-looking
+  fallback rather than a broken one.
+
+Whatever is missing degrades to the `.png`, and a viewer with "reduce motion"
+set always gets the still.
 
 ## Fonts
 

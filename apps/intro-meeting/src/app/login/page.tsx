@@ -8,13 +8,16 @@ import {
   Text,
 } from "@elvtr/ui-kit"
 
+import { heroMedia } from "@/lib/hero-media"
+
 import { loginWithGoogle } from "./actions"
 import { LoginButton } from "./login-button"
 
 /*
  * Desktop-9 of "Intro Meeting UI" (node 5725:11407): the ceramic cat-and-ball
  * hero, "Welcome to Meetball" as a 56px display line, a 30px support line, and
- * the Cola Orange "Log In".
+ * the Cola Orange CTA — labelled "Log In with Google" rather than the frame's
+ * bare "Log In", so the screen says which provider it hands you to.
  */
 
 export const metadata: Metadata = {
@@ -49,14 +52,14 @@ export default async function LoginPage({
     : null
 
   return (
-    <HeroStage image="/hero/login.png">
+    <HeroStage {...heroMedia().login}>
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
           Welcome to Meetball
         </Heading>
         <Text variant="lead">
-          Type a cohort, get its intro meeting deck. Sign in with your ELVTR Google
-          account to start.
+          Type a cohort, get its intro meeting deck. Sign in with your ELVTR account
+          to start.
         </Text>
         {error ? (
           <DisclaimerCard className="max-w-[760px]" role="alert">
@@ -70,9 +73,7 @@ export default async function LoginPage({
           <input type="hidden" name="callbackUrl" value={callbackUrl} />
           <LoginButton />
         </form>
-        <Text className="text-elvtr-dark/50">
-          Google sign-in · verified @elvtr.com accounts only.
-        </Text>
+        <Text className="text-elvtr-dark/50">Verified @elvtr.com accounts only.</Text>
       </HeroStageActions>
     </HeroStage>
   )

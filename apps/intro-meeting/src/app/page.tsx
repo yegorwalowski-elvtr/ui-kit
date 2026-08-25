@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { signOutAction } from "@/app/actions"
 import { IntroMeetingFlow } from "@/components/intro-meeting-flow"
 import { firstNameFrom } from "@/lib/greeting"
+import { heroMedia } from "@/lib/hero-media"
 import { currentUserEmail } from "@/lib/session"
 
 export default async function Page() {
@@ -16,6 +17,7 @@ export default async function Page() {
       firstName={firstNameFrom(fullName, email)}
       fullName={fullName}
       email={email}
+      heroes={heroMedia()}
       onSignOut={signOutAction}
     />
   )

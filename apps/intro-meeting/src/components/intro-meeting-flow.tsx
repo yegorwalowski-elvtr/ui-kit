@@ -28,6 +28,7 @@ import {
   type ColorScheme,
 } from "@/lib/colors"
 import { partOfDay } from "@/lib/greeting"
+import type { HeroMediaMap } from "@/lib/hero-media"
 import type { CohortSuggestion, RunState } from "@/lib/runner/types"
 
 /*
@@ -83,11 +84,14 @@ export function IntroMeetingFlow({
   firstName,
   email,
   fullName,
+  heroes,
   onSignOut,
 }: {
   firstName: string | null
   email: string | null
   fullName: string | null
+  /** Resolved server-side from public/hero/ — see lib/hero-media.ts. */
+  heroes: HeroMediaMap
   onSignOut: () => void
 }) {
   const [phase, setPhase] = React.useState<Phase>({ kind: "prompt" })
@@ -264,7 +268,7 @@ export function IntroMeetingFlow({
   if (phase.kind === "prompt" || phase.kind === "running") {
     const running = phase.kind === "running"
     return (
-      <HeroStage image="/hero/greeting.png" topBar={topBar}>
+      <HeroStage {...heroes.greeting} topBar={topBar}>
         <HeroStageCopy>
           <Heading level="display" className="text-elvtr-dark capitalize">
             {/* Part of day comes from the viewer's clock, so the server render
@@ -344,7 +348,7 @@ export function IntroMeetingFlow({
     const complete = base !== "" && accent !== "" && isColorScheme(toScheme(base, accent))
 
     return (
-      <HeroStage image="/hero/colors.png" topBar={topBar}>
+      <HeroStage {...heroes.colors} topBar={topBar}>
         <HeroStageCopy>
           <Heading level="display" className="text-elvtr-dark capitalize">
             Oops, No Colors Yet!
@@ -400,7 +404,7 @@ export function IntroMeetingFlow({
 
   if (phase.kind === "done") {
     return (
-      <HeroStage image="/hero/done.png" topBar={topBar}>
+      <HeroStage {...heroes.done} topBar={topBar}>
         <HeroStageCopy>
           <Heading level="display" className="text-elvtr-dark capitalize">
             Ta-da!
@@ -436,7 +440,7 @@ export function IntroMeetingFlow({
   }
 
   return (
-    <HeroStage image="/hero/door.png" topBar={topBar}>
+    <HeroStage {...heroes.door} topBar={topBar}>
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
           That Didn&rsquo;t Work

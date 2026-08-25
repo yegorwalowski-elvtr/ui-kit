@@ -8,6 +8,8 @@ import {
   Text,
 } from "@elvtr/ui-kit"
 
+import { heroMedia } from "@/lib/hero-media"
+
 /**
  * Where the mock runner's "Open Presentation" lands. It exists so the button is
  * honest: with the mock runner wired up, no Gamma deck was ever generated.
@@ -20,7 +22,7 @@ export default async function MockDeckPage({
   const { cohort } = await searchParams
 
   return (
-    <HeroStage image="/hero/door.png">
+    <HeroStage {...heroMedia().door}>
       <HeroStageCopy>
         <Heading level="display" className="text-elvtr-dark capitalize">
           No Deck Here Yet
