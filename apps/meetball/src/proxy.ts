@@ -19,14 +19,14 @@ const localPreviewProxy: NextProxy = (request) => {
 }
 
 // Staging review before OAuth credentials exist: skips Google auth on every
-// host. Remove INTRO_MEETING_PUBLIC_PREVIEW from the environment once
+// host. Remove MEETBALL_PUBLIC_PREVIEW from the environment once
 // AUTH_GOOGLE_ID / AUTH_GOOGLE_SECRET are set.
 const publicPreviewProxy: NextProxy = () => NextResponse.next()
 
 export const proxy =
-  process.env.INTRO_MEETING_PUBLIC_PREVIEW === "1"
+  process.env.MEETBALL_PUBLIC_PREVIEW === "1"
     ? publicPreviewProxy
-    : process.env.INTRO_MEETING_LOCAL_PREVIEW === "1"
+    : process.env.MEETBALL_LOCAL_PREVIEW === "1"
       ? localPreviewProxy
       : auth
 

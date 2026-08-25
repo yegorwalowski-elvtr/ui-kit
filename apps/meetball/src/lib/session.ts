@@ -12,8 +12,8 @@ const PREVIEW_USER = "preview@elvtr.com"
 
 function previewMode() {
   return (
-    process.env.INTRO_MEETING_PUBLIC_PREVIEW === "1" ||
-    process.env.INTRO_MEETING_LOCAL_PREVIEW === "1"
+    process.env.MEETBALL_PUBLIC_PREVIEW === "1" ||
+    process.env.MEETBALL_LOCAL_PREVIEW === "1"
   )
 }
 

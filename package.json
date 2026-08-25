@@ -23,9 +23,9 @@
     "build:icons": "node scripts/build-icon-modules.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
-    "dev:intro": "npm run dev --workspace @elvtr/intro-meeting",
-    "build:intro": "npm run build --workspace @elvtr/intro-meeting",
-    "start:intro": "npm run start --workspace @elvtr/intro-meeting"
+    "dev:meetball": "npm run dev --workspace @elvtr/meetball",
+    "build:meetball": "npm run build --workspace @elvtr/meetball",
+    "start:meetball": "npm run start --workspace @elvtr/meetball"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

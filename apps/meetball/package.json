@@ -1,8 +1,8 @@
 {
-  "name": "@elvtr/intro-meeting",
+  "name": "@elvtr/meetball",
   "version": "0.1.0",
   "private": true,
-  "description": "User-facing skin for the creative-gamma-intro-meetings skill: pick a cohort, get an ELVTR Intro Meeting deck.",
+  "description": "Meetball — the ELVTR intro-meeting tool: pick a cohort, get its Gamma deck.",
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",

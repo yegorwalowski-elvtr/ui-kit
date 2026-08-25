@@ -4,9 +4,8 @@ The user-facing skin for the `creative-gamma-intro-meetings` skill: someone on
 the team signs in with their ELVTR Google account, types a cohort code, and gets
 back a link to the cohort's Introduction Meeting deck in Gamma.
 
-**Meetball** is the product name (Figma, Desktop-9). The folder, the package
-(`@elvtr/intro-meeting`) and the `INTRO_MEETING_*` env vars still carry the old
-name — renaming those changes deploy configuration, so it is a separate step.
+**Meetball** is the product name (Figma, Desktop-9); the folder, the package and
+the `MEETBALL_*` env vars all match it.
 
 Four screens, assembled from `@elvtr/ui-kit`:
 
@@ -30,14 +29,14 @@ From the repo root (the UI kit is the workspace root):
 
 ```bash
 npm install
-npm run dev:intro                       # or: npm run dev --workspace @elvtr/intro-meeting
+npm run dev:meetball                       # or: npm run dev --workspace @elvtr/meetball
 ```
 
 Sign-in needs Google credentials. To click through the flow without them:
 
 ```bash
-cd apps/intro-meeting
-INTRO_MEETING_LOCAL_PREVIEW=1 npm run dev     # skips auth, localhost only
+cd apps/meetball
+MEETBALL_LOCAL_PREVIEW=1 npm run dev     # skips auth, localhost only
 ```
 
 ## Sign-in
@@ -60,8 +59,8 @@ Two escape hatches, both off by default:
 
 | Variable | Effect |
 | --- | --- |
-| `INTRO_MEETING_LOCAL_PREVIEW=1` | Skips auth **on localhost only**; other hosts get a 403 |
-| `INTRO_MEETING_PUBLIC_PREVIEW=1` | Skips auth on every host — staging review before OAuth exists. Remove it as soon as `AUTH_GOOGLE_*` are set |
+| `MEETBALL_LOCAL_PREVIEW=1` | Skips auth **on localhost only**; other hosts get a 403 |
+| `MEETBALL_PUBLIC_PREVIEW=1` | Skips auth on every host — staging review before OAuth exists. Remove it as soon as `AUTH_GOOGLE_*` are set |
 
 In either preview mode a run is attributed to `preview@elvtr.com`.
 
@@ -243,8 +242,8 @@ load-bearing: this app is an npm workspace whose UI-kit dependency resolves to
 `../..`, so install, build and start all have to run from the root. Point the
 Railway service at the repository root (the default) and leave it alone.
 
-It mirrors Photo Booth's otherwise: RAILPACK, `npm run build:intro` /
-`npm run start:intro`, healthcheck `/api/health`. Set `AUTH_SECRET`, `AUTH_URL`,
+It mirrors Photo Booth's otherwise: RAILPACK, `npm run build:meetball` /
+`npm run start:meetball`, healthcheck `/api/health`. Set `AUTH_SECRET`, `AUTH_URL`,
 `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and add
 `<AUTH_URL>/api/auth/callback/google` to the Google OAuth client's authorized
 redirect URIs.
