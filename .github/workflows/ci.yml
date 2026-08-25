@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    # The repo has no `main` yet; this is its current default branch.
+    branches: [claude/photo-booth-brainstorm-2xr3uk, main]
+  workflow_dispatch:
+
+jobs:
+  kit:
+    name: UI kit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Regenerates the inlined SVG module and fails if it drifted from the .svg files.
+      - run: npm run build:icons
+      - name: Check the generated icon module is committed
+        run: git diff --exit-code -- src/assets/icons/svg-sources.ts
+      - run: npm run typecheck
+      - run: npm run build
+
+  meetball:
+    name: Meetball
+    runs-on: ubuntu-latest
+    env:
+      # Auth.js refuses to initialise without a secret; this one never leaves the runner.
+      AUTH_SECRET: ci-only-secret-not-used-outside-the-runner
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck --workspace @elvtr/meetball
+      # Exactly what Railway runs, from the repo root.
+      - run: npm run build:meetball
