@@ -170,7 +170,7 @@ const DEMO_COHORTS = [
   { value: "UK-GW11", detail: "Video Game Writing" },
 ]
 
-/* Swatch hexes live in the consuming app — see apps/meetball/src/lib/colors.ts. */
+/* Swatch hexes live in the consuming app — see src/lib/colors.ts in the Meetball repo. */
 const DEMO_BASES = [
   { value: "blue", label: "Blue", color: "#102E9C" },
   { value: "green", label: "Green", color: "#025453" },

@@ -2,14 +2,17 @@
 
 ELVTR design-system foundation: **React 18/19 + TypeScript + Tailwind CSS v4 +
 shadcn/ui**, carrying the ELVTR brand tokens, licensed fonts and vuesax-bulk
-brand icons. Product UIs (the **Photo Booth** service screens; **Meetball**, the intro-meeting
-app in [`apps/meetball`](apps/meetball)) are assembled from this kit.
+brand icons. Product UIs are assembled from this kit — the **Photo Booth**
+service screens, and **Meetball**, the intro-meeting app, which lives in
+[its own repo](https://github.com/yegorwalowski-elvtr/meatbal).
+
+This repo is the kit and nothing else: a library plus a demo page. It builds no
+product and deploys nowhere.
 
 ```bash
-npm install       # once — installs the kit and every app under apps/*
+npm install       # once
 npm run dev       # kit demo/spec page at http://localhost:5173
 npm run build     # icons + typecheck + production build of the demo
-npm run dev:meetball # the Meetball app (apps/meetball)
 ```
 
 The demo page (`src/demo/App.tsx`) shows every token and component next to its
@@ -141,8 +144,8 @@ only transparent video Safari gets right, and only Apple tooling writes it — s
 animated WebP is the one file that moves everywhere.
 
 A ProRes 4444 `.mov` straight out of After Effects plays in none of them; it is
-the master to encode from. `apps/meetball` picks all of this up from
-filenames — see its README.
+the master to encode from. Meetball picks all of this up from filenames — see
+that repo's README.
 
 Generic product icons: use [`lucide-react`](https://lucide.dev) (shadcn
 default), already a dependency.
@@ -163,10 +166,16 @@ The kit ships as **source** (`src/index.ts` — see `exports` in
 `package.json`); the consumer's bundler compiles it. Recommended for Vite
 apps like Photo Booth:
 
-1. **Add the dependency**
-   - Workspace (preferred while iterating): put both apps in one npm
-     workspace, or `"@elvtr/ui-kit": "file:../ui-kit"`.
-   - Git dependency: `"@elvtr/ui-kit": "git+ssh://git@github.com/elvtr/ui-kit.git#main"`.
+1. **Add the dependency** — the kit is private, so there is no registry to
+   install it from:
+   - Vendored copy: check the source into the consumer under e.g.
+     `packages/ui-kit` and depend on `"file:packages/ui-kit"`. No credentials
+     in anyone's build; you re-sync by hand. This is what Meetball does — see
+     its `packages/ui-kit/VENDORED.md`.
+   - Git dependency: `"@elvtr/ui-kit": "git+ssh://git@github.com/yegorwalowski-elvtr/ui-kit.git#<ref>"`.
+     One source of truth, but the consumer's CI and host both need a key, and
+     this repo has no long-lived branch to pin to yet.
+   - Local path while iterating: `"@elvtr/ui-kit": "file:../ui-kit"`.
 2. **Install React 18 or 19** — `react`/`react-dom` are peer dependencies
    (`^18.3.1 || ^19.0.0`).
 3. **Set up Tailwind v4** in the consumer (`@tailwindcss/vite` plugin) and in
@@ -192,8 +201,8 @@ apps like Photo Booth:
 No bundler-specific imports are used, so any bundler works. For Next.js, add
 `transpilePackages: ["@elvtr/ui-kit"]` — the kit ships TypeScript source. The
 components that hold state (`HeroStage`, `PillCombobox`, `SwatchSelect`) declare
-`"use client"`, so React Server Components can import them directly;
-`apps/meetball/next.config.ts` is a working example.
+`"use client"`, so React Server Components can import them directly; Meetball's
+`next.config.ts` is a working example.
 
 ## Project layout
 
@@ -211,14 +220,17 @@ src/
   demo/                  # runnable spec page (npm run dev)
 scripts/                 # build:icons generator
 public/fonts/            # drop licensed .woff2 files here
-apps/
-  meetball/              # Next.js app — the Intro Meeting skin (own README)
 ```
 
-## Apps
+## Who consumes it
 
-Apps live in `apps/*` as npm workspaces and consume the kit from source.
+Nothing product-facing is built or deployed from this repo. The consumers live
+in their own:
 
-| App | What it is |
+| Consumer | What it is |
 | --- | --- |
-| [`apps/meetball`](apps/meetball) | **Meetball** — skin for the `creative-gamma-intro-meetings` skill: ELVTR Google sign-in, cohort code in, Gamma deck link out |
+| [meatbal](https://github.com/yegorwalowski-elvtr/meatbal) | **Meetball** — skin for the `creative-gamma-intro-meetings` skill: ELVTR Google sign-in, cohort code in, Gamma deck link out |
+| [photo-booth](https://github.com/yegorwalowski-elvtr/photo-booth) | The Photo Booth service screens |
+
+Meetball carries a vendored copy of `src/` (see "Consuming from another app"),
+so a change here reaches it only when someone re-syncs it there.
