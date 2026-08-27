@@ -12,7 +12,7 @@ import { fieldBase, fieldFocus, fieldPlaceholder } from "./field"
  *
  * A native `<select>` on purpose: it is one control, it gets the platform
  * picker (including on mobile) and full keyboard behaviour for free. The
- * chevron is the exported Figma asset (18.923 x 10.866), shared with
+ * chevron is the exported Figma asset (12.829 x 7.539), shared with
  * `SwatchSelect` via `FieldChevron`.
  *
  * When the options are colours, use `SwatchSelect` instead — a native option
