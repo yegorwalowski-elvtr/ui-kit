@@ -13,10 +13,19 @@ import { cn } from "../../lib/utils"
  * centred copy + action column under it.
  *
  * Figma geometry (desktop ceilings — the mockups are 1440x1024 only, so the
- * paddings, gaps and hero height clamp down on shorter/narrower viewports
- * instead of overflowing): 56px vertical page padding, 120px side padding on
- * the column, 65px between hero / copy / actions, 35px inside the copy group,
+ * paddings and gaps clamp down on shorter/narrower viewports instead of
+ * overflowing): 56px vertical page padding, 120px side padding on the
+ * column, 65px between hero / copy / actions, 35px inside the copy group,
  * 20px inside the action row, hero box 733.33 x 400 (object-cover).
+ *
+ * The hero box is `aspect-[733/400]` on purpose, not a width clamp paired
+ * with a separate vh-based height clamp. Those two used to drift apart on
+ * anything shorter than a ~1250px-tall window — which is most real desktop
+ * browsers, 1440x1024 included — so the box stopped matching the art's own
+ * 1.833 ratio and `object-cover` quietly cropped far more than Figma ever
+ * shows. Locking the ratio means the box can only ever shrink, never
+ * distort; a short window scrolls a little instead, which is the smaller
+ * cost by far.
  *
  * Every frame in the file is one centred column, so there is no layout
  * variant — earlier revisions had a top/bottom split and no longer do.
@@ -131,7 +140,7 @@ function HeroStage({
       <div className="flex w-full flex-col items-center gap-[clamp(28px,5vh,65px)] px-6 md:px-[120px]">
         <div
           data-slot="hero-stage-image"
-          className="relative h-[clamp(160px,32vh,400px)] w-full max-w-[733px] shrink-0"
+          className="relative w-full max-w-[733px] aspect-[733/400] shrink-0"
         >
           {playAnimation ? (
             <img
