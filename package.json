@@ -14,15 +14,12 @@
   },
   "files": [
     "src",
-    "public/fonts",
-    "scripts"
+    "public/fonts"
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:icons && tsc -b && vite build",
-    "build:icons": "node scripts/build-icon-modules.mjs",
-    "preview": "vite preview",
-    "typecheck": "tsc -b"
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -32,17 +29,17 @@
     "tailwind-merge": "^3.3.1"
   },
   "peerDependencies": {
-    "react": "^18.3.1 || ^19.0.0",
-    "react-dom": "^18.3.1 || ^19.0.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "@types/node": "^22.15.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.5.2",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3",
     "vite": "^6.3.5"

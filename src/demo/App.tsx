@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import type { ReactNode } from "react"
 
 import { ArrowUpRight, Camera, Sparkles } from "lucide-react"
 
@@ -12,22 +12,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  AccountChip,
   Chip,
-  ColaButton,
   CtaButton,
   DetailTile,
-  DisclaimerCard,
   Heading,
-  HeroStage,
-  HeroStageActions,
-  HeroStageCopy,
   Input,
   Label,
-  PillCombobox,
-  PillInput,
-  PillSelect,
-  SwatchSelect,
   SectionTabs,
   SectionTabsContent,
   Text,
@@ -95,40 +85,6 @@ const SWATCHES: SwatchSpec[] = [
     labelClass: "text-elvtr-dark",
     note: "TODO confirm exact hex with Design Team",
   },
-  {
-    figmaName: "Brand/Cola Orange/Signal",
-    cssVar: "--elvtr-cola-signal",
-    hex: "#FF8A00",
-    usage: "CTA ink — only ever on Cola Orange Latent",
-    swatchClass: "bg-elvtr-cola-signal",
-    labelClass: "text-elvtr-cola-latent",
-  },
-  {
-    figmaName: "Brand/Cola Orange/Latent",
-    cssVar: "--elvtr-cola-latent",
-    hex: "#2E1A0C",
-    usage: "CTA ground under Signal ink",
-    swatchClass: "bg-elvtr-cola-latent",
-    labelClass: "text-elvtr-cola-signal",
-  },
-  {
-    figmaName: "Mauve (Intro Meeting UI)",
-    cssVar: "--elvtr-mauve",
-    hex: "#C2B2B3",
-    usage: "Page ground of the Cola Orange screens",
-    swatchClass: "bg-elvtr-mauve",
-    labelClass: "text-elvtr-dark",
-    note: "Raw hex in Figma — TODO tokenize with Design Team",
-  },
-  {
-    figmaName: "Cream (Intro Meeting UI)",
-    cssVar: "--elvtr-cream",
-    hex: "#F9EFEC",
-    usage: "Field ground on Mauve",
-    swatchClass: "bg-elvtr-cream",
-    labelClass: "text-elvtr-dark",
-    note: "Raw hex in Figma — TODO tokenize with Design Team",
-  },
 ]
 
 function Swatch({ spec }: { spec: SwatchSpec }) {
@@ -153,97 +109,6 @@ function Swatch({ spec }: { spec: SwatchSpec }) {
           </Text>
         ) : null}
       </div>
-    </div>
-  )
-}
-
-/* ---------------------------------------- Cola Orange surface preview */
-
-/**
- * Live preview of the Cola Orange screens (Core Brand Guides 2.0, "Intro
- * Meeting UI"). `HeroStage` is a full-viewport shell, so the demo caps its
- * height to keep it inside the page.
- */
-const DEMO_COHORTS = [
-  { value: "GD10", detail: "Game Design with Unreal Engine 5" },
-  { value: "GWA2", detail: "Advanced Game Writing" },
-  { value: "UK-GW11", detail: "Video Game Writing" },
-]
-
-/* Swatch hexes live in the consuming app — see apps/meetball/src/lib/colors.ts. */
-const DEMO_BASES = [
-  { value: "blue", label: "Blue", color: "#102E9C" },
-  { value: "green", label: "Green", color: "#025453" },
-  { value: "purple", label: "Purple", color: "#58438A" },
-  { value: "white", label: "White", color: "#F9F9F9" },
-]
-
-function ColaSurfacePreview() {
-  const [cohort, setCohort] = useState("")
-  const [plain, setPlain] = useState("")
-  const [base, setBase] = useState("")
-  const [nativeBase, setNativeBase] = useState("")
-
-  return (
-    <div className="overflow-hidden rounded-lg border">
-      <HeroStage
-        image="/hero-placeholder.svg"
-        imageFit="contain"
-        className="min-h-0 py-8"
-        topBar={<AccountChip initials="KS" aria-label="Account: ks@elvtr.com" />}
-      >
-        <HeroStageCopy>
-          <Heading level="display" as="p" className="text-elvtr-dark">
-            Good Morning, Sabina!
-          </Heading>
-          <Text variant="lead">Which cohort needs an intro meeting today?</Text>
-
-          {/* PillCombobox — suggests as you type; the caller supplies matches. */}
-          <PillCombobox
-            value={cohort}
-            onValueChange={setCohort}
-            suggestions={DEMO_COHORTS.filter((item) =>
-              item.value.toUpperCase().startsWith(cohort.trim().toUpperCase())
-            )}
-            emptyMessage="No cohort matches that yet."
-            placeholder="Start typing a cohort code…"
-            aria-label="Cohort code"
-          />
-
-          {/* SwatchSelect — a listbox, because option rows carry colour dots. */}
-          <div className="flex flex-wrap justify-center gap-3">
-            <SwatchSelect
-              placeholder="Primary color"
-              aria-label="Primary color"
-              value={base}
-              onValueChange={setBase}
-              options={DEMO_BASES}
-            />
-            <PillSelect
-              placeholder="Native select"
-              aria-label="Native select"
-              value={nativeBase}
-              onChange={(event) => setNativeBase(event.target.value)}
-              options={DEMO_BASES.map(({ value, label }) => ({ value, label }))}
-            />
-          </div>
-
-          <PillInput
-            value={plain}
-            onChange={(event) => setPlain(event.target.value)}
-            placeholder="Plain PillInput, no suggestions"
-            aria-label="Plain field"
-          />
-
-          <DisclaimerCard className="max-w-[680px]">
-            No Discord link in Planna Cotta — the deck keeps the template&rsquo;s button.
-          </DisclaimerCard>
-        </HeroStageCopy>
-        <HeroStageActions>
-          <ColaButton>Create!</ColaButton>
-          <ColaButton disabled>Disabled</ColaButton>
-        </HeroStageActions>
-      </HeroStage>
     </div>
   )
 }
@@ -331,23 +196,6 @@ export default function App() {
               <Heading level="h1" as="p">
                 Session Details for your cohort
               </Heading>
-            </div>
-            <div className="space-y-1">
-              <Text variant="caption">
-                Display — Arizona Flare 500 · 56px / 1.0 · ls -2.24px (Intro
-                Meeting screen title; clamps down on narrow viewports)
-              </Text>
-              <Heading level="display" as="p" className="text-foreground">
-                Oops, No Colors Yet!
-              </Heading>
-            </div>
-            <div className="space-y-1">
-              <Text variant="caption">
-                Lead — Neue Montreal 500 · 24px / 1.2 (line under a display title)
-              </Text>
-              <Text variant="lead" className="max-w-2xl">
-                Which cohort needs an intro meeting today?
-              </Text>
             </div>
             <div className="space-y-1">
               <Text variant="caption">H3 — Arizona Flare 500 · 22px (tile header)</Text>
@@ -456,15 +304,7 @@ export default function App() {
           </SectionTabs>
         </DemoSection>
 
-        {/* 7. Cola Orange surface */}
-        <DemoSection
-          title="Cola Orange surface"
-          description="The second ELVTR surface (Core Brand Guides 2.0, “Intro Meeting UI”): Mauve page ground, Cream fields, a Cola Orange CTA (Signal ink on Latent ground, 12px radius), the account chip and the Cream disclaimer card. HeroStage is the full-viewport shell; here it is height-capped for the demo."
-        >
-          <ColaSurfacePreview />
-        </DemoSection>
-
-        {/* 8. shadcn base components on brand tokens */}
+        {/* 7. shadcn base components on brand tokens */}
         <DemoSection
           title="shadcn/ui base"
           description="Stock shadcn components picking up the ELVTR semantic slots: primary = Dark Teal, accent = lime, muted/card = Alice Blue, ring = Dark Teal, radius = 15px."

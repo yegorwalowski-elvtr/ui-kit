@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="">
-  <!-- Stand-in for the 3D hero render in the demo page: the real screens pass a
-       levitating object from the Figma 3D_icons library. -->
-  <circle cx="100" cy="92" r="52" fill="#f9efec"/>
-  <ellipse cx="100" cy="162" rx="46" ry="9" fill="#2e1a0c" opacity="0.12"/>
-  <circle cx="100" cy="92" r="18" fill="#ff8a00"/>
-</svg>
