@@ -37,39 +37,9 @@ export {
   type BrandIconName,
   type BrandIconProps,
 } from "./components/elvtr/brand-icon"
-export {
-  AccountChip,
-  initialsFrom,
-  type AccountChipProps,
-} from "./components/elvtr/account-chip"
 export { Chip, chipVariants, type ChipProps } from "./components/elvtr/chip"
-export { FieldChevron } from "./components/elvtr/chevron"
-export { ColaButton, type ColaButtonProps } from "./components/elvtr/cola-button"
 export { CtaButton, type CtaButtonProps } from "./components/elvtr/cta-button"
 export { DetailTile, type DetailTileProps } from "./components/elvtr/detail-tile"
-export {
-  DisclaimerCard,
-  type DisclaimerCardProps,
-} from "./components/elvtr/disclaimer-card"
-export {
-  HeroStage,
-  HeroStageActions,
-  HeroStageCopy,
-  type HeroStageProps,
-  type HeroVideoSources,
-} from "./components/elvtr/hero-stage"
-export {
-  PillCombobox,
-  type ComboboxSuggestion,
-  type PillComboboxProps,
-} from "./components/elvtr/pill-combobox"
-export { PillInput } from "./components/elvtr/pill-input"
-export { PillSelect, type PillSelectProps } from "./components/elvtr/pill-select"
-export {
-  SwatchSelect,
-  type SwatchOption,
-  type SwatchSelectProps,
-} from "./components/elvtr/swatch-select"
 export {
   SectionTabs,
   SectionTabsContent,

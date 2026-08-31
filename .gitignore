@@ -28,11 +28,6 @@ pnpm-debug.log*
 # Local env
 *.local
 
-# Env files
-.env
-.env.*
-!.env.example
-
 # Licensed font binaries are provided per-environment, not committed by default.
 # Remove these lines if the team decides to commit them to this private repo.
 public/fonts/*.woff2

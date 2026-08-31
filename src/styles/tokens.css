@@ -28,19 +28,6 @@
      TODO confirm exact hex with Design Team */
   --elvtr-sand: #f2efe9;
 
-  /* ---- Cola Orange surface (Core Brand Guides 2.0) ---------------------
-     Figma variables "Brand/Cola Orange/Signal" + "Brand/Cola Orange/Latent".
-     Signal ink ALWAYS sits on Latent ground — never Signal on the mauve
-     page background (fails contrast) and never light text on Signal. */
-  --elvtr-cola-signal: #ff8a00;
-  --elvtr-cola-latent: #2e1a0c;
-  /* Mauve — the page ground of the Intro Meeting screens, and Cream — the
-     input/field ground on it. Raw hex in Figma (Core Brand Guides 2.0,
-     "Intro Meeting UI"), not yet published as variables.
-     TODO tokenize with Design Team */
-  --elvtr-mauve: #c2b2b3;
-  --elvtr-cream: #f9efec;
-
   /* ---- shadcn/ui semantic slots (light theme) ---------------------------- */
   --background: var(--elvtr-sand);
   --foreground: var(--elvtr-dark);
@@ -98,10 +85,6 @@
   --color-elvtr-dark: var(--elvtr-dark);
   --color-elvtr-light: var(--elvtr-light);
   --color-elvtr-sand: var(--elvtr-sand);
-  --color-elvtr-cola-signal: var(--elvtr-cola-signal);
-  --color-elvtr-cola-latent: var(--elvtr-cola-latent);
-  --color-elvtr-mauve: var(--elvtr-mauve);
-  --color-elvtr-cream: var(--elvtr-cream);
 
   /* Typography */
   --font-display:

@@ -19,12 +19,6 @@ const headingVariants = cva("font-display font-medium text-primary", {
     level: {
       /** Oversized hero display — up to 200px, 0.9 leading (Figma hero). */
       hero: "text-[clamp(56px,10vw,200px)] leading-[0.9] tracking-[-0.02em] text-balance",
-      /**
-       * Screen title — 60px / 1.0, tracking -2.4px. From Core Brand Guides
-       * 2.0, "Intro Meeting UI" (e.g. node 5709:5245). Steps down on narrow
-       * viewports; the Figma value is the ceiling.
-       */
-      display: "text-[clamp(34px,5.2vw,60px)] leading-none tracking-[-0.04em] text-balance",
       /** Figma H1: 34px / 1.0, letter-spacing -1px. */
       h1: "text-[34px] leading-none tracking-[-1px]",
       /* Interpolated step (not yet a Figma token) */
@@ -50,8 +44,7 @@ export interface HeadingProps
 }
 
 function Heading({ level = "h1", as, className, ...props }: HeadingProps) {
-  const Comp: HeadingElement =
-    as ?? (level === "hero" || level === "display" || level == null ? "h1" : level)
+  const Comp: HeadingElement = as ?? (level === "hero" || level == null ? "h1" : level)
   return (
     <Comp
       data-slot="heading"
@@ -64,11 +57,6 @@ function Heading({ level = "h1", as, className, ...props }: HeadingProps) {
 const textVariants = cva("font-sans font-medium", {
   variants: {
     variant: {
-      /**
-       * 30px / 1.2 — the supporting line under a `display` heading in Core
-       * Brand Guides 2.0, "Intro Meeting UI" (e.g. node 5709:5246).
-       */
-      lead: "text-[clamp(18px,2.4vw,30px)] leading-[1.2]",
       /* Interpolated step (not yet a Figma token) */
       p1: "text-[18px] leading-[1.25]",
       /** Figma P2: 16px / 1.2 — the default body style. */
