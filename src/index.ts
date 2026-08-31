@@ -66,6 +66,10 @@ export {
 export { PillInput } from "./components/elvtr/pill-input"
 export { PillSelect, type PillSelectProps } from "./components/elvtr/pill-select"
 export {
+  SecondaryLink,
+  type SecondaryLinkProps,
+} from "./components/elvtr/secondary-link"
+export {
   SwatchSelect,
   type SwatchOption,
   type SwatchSelectProps,
